@@ -116,6 +116,15 @@ public class JwtProvider {
                 .getSubject();
     }
 
+    public long getExpirationDuration(String token) {
+        Date expiration = Jwts.parser()
+                .setSigningKey(refreshSecretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        return expiration.getTime() - System.currentTimeMillis();
+    }
+
     // HTTP 헤더 정보에 X-AUTH-TOKEN 전달
     public String resolveToken(HttpServletRequest request){
         logger.info("[resolveToken] : {} " , request);
