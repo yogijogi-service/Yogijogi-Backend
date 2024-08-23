@@ -1,7 +1,9 @@
-package com.springboot.yogijogii.entity;
+package com.springboot.yogijogii.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
+import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.BatchSize;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,58 +32,66 @@ public class Member implements UserDetails {
     @Column(nullable = false,unique = true)
     private String email;
 
-    @Column(nullable = false)
+
     private String password;
 
-    @Column(nullable = false)
+
     private String gender;
 
-    @Column(nullable = false)
+
     private String name;
 
-    @Column(nullable = false)
-    private Long birthDate;  //생년월일
 
-    @Column(nullable = false)
+    private String profileUrl;
+
+
+    private String birthDate;  //생년월일
+
+
     private String phoneNum;
 
-    @Column(nullable = false)
+
     private String level;
 
-    @Column(nullable = false)
+
     private boolean certificationNum;   // 인증번호
 
-    @Column(nullable = true)
     private boolean hasExperience;  // 선수경험
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @Column(nullable = true)
     private List<String> position;   //포지션
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @Column(nullable = true)
     private List<String> availableDays ;   //가능 요일
 
-    @Column(nullable = true)
     private String availableTimeStart;  // 시작 시간
 
-    @Column(nullable = true)
     private String  availableTimeEnd;  // 종료 시간
 
-    @Column(nullable = true)
     boolean allAgreement;
 
-    @Column(nullable = false)
+
     boolean consentServiceUser;
 
-    @Column(nullable = false)
+
     boolean consentPersonalInfo;
 
-    @Column(nullable = false)
+
     boolean consentToThirdPartyOffers;
 
-    @Column(nullable = true)
+
     boolean consentToReceivingMail;
+
+    private String loginMethod;
+
+    private boolean verified = false;
+
+    @Column(length = 512)
+    private String refreshToken;
+
+    private LocalDateTime create_At;
+
+    private LocalDateTime update_At;
 
     @Override
     @Transactional
@@ -143,6 +154,26 @@ public class Member implements UserDetails {
     public List<MemberRole> getMemberRolesWithInit() {
         Hibernate.initialize(memberRoles);
         return memberRoles;
+    }
+
+    public static Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
+        return Member.builder()
+                .email(kakaoUserInfoResponse.getEmail())
+                .name(kakaoUserInfoResponse.getName())
+                .phoneNum(kakaoUserInfoResponse.getPhoneNum())
+                .gender(kakaoUserInfoResponse.getGender())
+                .birthDate(kakaoUserInfoResponse.getBirthDate())
+                .profileUrl(kakaoUserInfoResponse.getProfileUrl())
+                .loginMethod("Kakao")
+                .create_At(LocalDateTime.now())
+                .update_At(LocalDateTime.now())
+                .build();
+    }
+
+    public void addKakaoAdditionalInfo(AdditionalInfoDto additionalInfoDto) {
+        this.level = additionalInfoDto.getLevel();
+        this.hasExperience = additionalInfoDto.isHasExperience();
+        this.update_At = LocalDateTime.now();
     }
 
 }
