@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.entity;
+package com.springboot.yogijogii.data.entity;
 
 import lombok.*;
 
