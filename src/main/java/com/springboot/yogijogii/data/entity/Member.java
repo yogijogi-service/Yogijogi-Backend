@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
+import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -21,10 +23,12 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Member implements UserDetails {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;  // id 식별값
@@ -35,24 +39,21 @@ public class Member implements UserDetails {
 
     private String password;
 
+    private String passwordCheck;
 
     private String gender;
 
-
     private String name;
 
+    private String address;
 
     private String profileUrl;
 
-
     private String birthDate;  //생년월일
-
 
     private String phoneNum;
 
-
     private String level;
-
 
     private boolean certificationNum;   // 인증번호
 
@@ -67,20 +68,6 @@ public class Member implements UserDetails {
     private String availableTimeStart;  // 시작 시간
 
     private String  availableTimeEnd;  // 종료 시간
-
-    boolean allAgreement;
-
-
-    boolean consentServiceUser;
-
-
-    boolean consentPersonalInfo;
-
-
-    boolean consentToThirdPartyOffers;
-
-
-    boolean consentToReceivingMail;
 
     private String loginMethod;
 
@@ -151,23 +138,13 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     private List<JoinForms> joinForms;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "memberAgreement_id", referencedColumnName = "id")
+    private MemberAgreement memberAgreement;
+
     public List<MemberRole> getMemberRolesWithInit() {
         Hibernate.initialize(memberRoles);
         return memberRoles;
-    }
-
-    public static Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
-        return Member.builder()
-                .email(kakaoUserInfoResponse.getEmail())
-                .name(kakaoUserInfoResponse.getName())
-                .phoneNum(kakaoUserInfoResponse.getPhoneNum())
-                .gender(kakaoUserInfoResponse.getGender())
-                .birthDate(kakaoUserInfoResponse.getBirthDate())
-                .profileUrl(kakaoUserInfoResponse.getProfileUrl())
-                .loginMethod("Kakao")
-                .create_At(LocalDateTime.now())
-                .update_At(LocalDateTime.now())
-                .build();
     }
 
     public void addKakaoAdditionalInfo(AdditionalInfoDto additionalInfoDto) {
@@ -175,5 +152,4 @@ public class Member implements UserDetails {
         this.hasExperience = additionalInfoDto.isHasExperience();
         this.update_At = LocalDateTime.now();
     }
-
 }

@@ -3,9 +3,9 @@ package com.springboot.yogijogii.data.repository.JoinForm.Impl;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.springboot.yogijogii.data.entity.JoinForms;
-import com.springboot.yogijogii.entity.QJoinForms;
-import com.springboot.yogijogii.entity.QMember;
-import com.springboot.yogijogii.entity.QTeam;
+import com.springboot.yogijogii.data.entity.QJoinForms;
+import com.springboot.yogijogii.data.entity.QMember;
+import com.springboot.yogijogii.data.entity.QTeam;
 import com.springboot.yogijogii.data.repository.JoinForm.JoinFormsCustom;
 
 import lombok.RequiredArgsConstructor;

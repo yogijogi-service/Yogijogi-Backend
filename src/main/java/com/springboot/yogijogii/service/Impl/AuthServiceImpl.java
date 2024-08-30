@@ -13,6 +13,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.service.AuthService;
+import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthDao authDao;
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
 
     @Value("${kakao.client.id}")
@@ -131,7 +133,7 @@ public class AuthServiceImpl implements AuthService {
         Member member = authDao.kakaoUserFind(kakaoUserInfoResponse.getEmail());
 
         if (member == null) {
-            member = Member.createKakaoUser(kakaoUserInfoResponse);
+            member = memberService.createKakaoUser(kakaoUserInfoResponse);
             authDao.KakaoMemberSave(member);
             setSuccess(signInResultDto);
             signInResultDto.setDetailMessage("회원가입 완료.");

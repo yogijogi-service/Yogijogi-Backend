@@ -1,9 +1,9 @@
 package com.springboot.yogijogii.data.repository.member.Impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.springboot.yogijogii.data.entity.QMember;
+import com.springboot.yogijogii.data.entity.QTeam;
 import com.springboot.yogijogii.data.repository.member.MemberRepositoryCustom;
-import com.springboot.yogijogii.entity.QMember;
-import com.springboot.yogijogii.entity.QTeam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
