@@ -2,10 +2,12 @@ package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
+import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
+import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
@@ -69,13 +71,22 @@ public class SignServiceImpl implements SignService {
     }
 
     @Override
-    public ResultDto SignUp(SignReqeustDto signReqeustDto, HttpServletRequest request) {
+    public ResultDto SignUp(SignReqeustDto signReqeustDto, AgreementDto agreementDto, HttpServletRequest request) {
         ResultDto resultDto = new ResultDto();
         Member partialMember = (Member) request.getSession().getAttribute("partialMember");
 
         if(partialMember !=null) {
             Member member = memberService.createUser(signReqeustDto);
+            MemberAgreement memberAgreement = memberService.saveAgreement(agreementDto);
+
+            member.setPhoneNum(partialMember.getPhoneNum()); // 세션에서 가져온 전화번호를 명시적으로 할당함.
+            member.setMemberAgreement(memberAgreement);
+            memberAgreement.setMember(member);
+
+
+            //디비 저장이용
             signDao.saveSignUpInfo(member);
+            signDao.saveMemberAgree(memberAgreement);
             resultDto.setDetailMessage("회원가입 완료.");
             setSuccess(resultDto);
         }else{
@@ -99,16 +110,28 @@ public class SignServiceImpl implements SignService {
 
         log.info("[getSignInResult] 패스워드 일치");
         // 토큰 생성
-        String token = jwtProvider.createToken(
+        String accessToken = jwtProvider.createToken(
                 String.valueOf(member.getPhoneNum()),
                 member.getMemberRoles().stream()
                         .map(MemberRole::getRole)
                         .collect(Collectors.toList())
         );
 
+        String existingRefreshToken = member.getRefreshToken();
+        String refreshToken;
+
+        if(existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
+            refreshToken = existingRefreshToken;
+        }else{
+            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
+            member.setRefreshToken(refreshToken);
+            signDao.saveSignUpInfo(member);
+        }
+
         // SignInResultDto 작성 및 반환
         SignInResultDto signInResultDto = new SignInResultDto();
-        signInResultDto.setToken(token);
+        signInResultDto.setToken(accessToken);
+        signInResultDto.setRefreshToken(refreshToken);
         signInResultDto.setDetailMessage("로그인 성공");
         setSuccess(signInResultDto);
         return signInResultDto;

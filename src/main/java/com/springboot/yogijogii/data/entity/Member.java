@@ -36,7 +36,6 @@ public class Member implements UserDetails {
     @Column(nullable = false,unique = true)
     private String email;
 
-
     private String password;
 
     private String passwordCheck;
@@ -61,13 +60,6 @@ public class Member implements UserDetails {
 
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> position;   //포지션
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> availableDays ;   //가능 요일
-
-    private String availableTimeStart;  // 시작 시간
-
-    private String  availableTimeEnd;  // 종료 시간
 
     private String loginMethod;
 

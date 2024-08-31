@@ -2,8 +2,10 @@ package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
+import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
+import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +29,8 @@ public class MemberServiceImpl implements MemberService {
                 .birthDate(kakaoUserInfoResponse.getBirthDate())
                 .profileUrl(kakaoUserInfoResponse.getProfileUrl())
                 .loginMethod("Kakao")
+                .password("pass")
+                .passwordCheck("pass")
                 .create_At(LocalDateTime.now())
                 .update_At(LocalDateTime.now())
                 .build();
@@ -48,6 +52,8 @@ public class MemberServiceImpl implements MemberService {
                 .certificationNum(true)
                 .address(signReqeustDto.getBirthDate())
                 .loginMethod("Normal")
+                .gender(signReqeustDto.getGender())
+                .name(signReqeustDto.getName())
                 .create_At(LocalDateTime.now())
                 .update_At(LocalDateTime.now())
                 .build();
@@ -58,6 +64,17 @@ public class MemberServiceImpl implements MemberService {
                 .phoneNum(phoneNum)
                 .certificationNum(true)
                 .build();
+    }
+
+    public MemberAgreement saveAgreement(AgreementDto agreementDto) {
+        return MemberAgreement.builder()
+                .allAgreement(agreementDto.isAllAgreement())
+                .consentPersonalInfo(agreementDto.isConsentPersonalInfo())
+                .consentServiceUser(agreementDto.isConsentServiceUser())
+                .consentToReceivingMail(agreementDto.isConsentToReceivingMail())
+                .consentToThirdPartyOffers(agreementDto.isConsentToThirdPartyOffers())
+                .build();
+
     }
 
 }

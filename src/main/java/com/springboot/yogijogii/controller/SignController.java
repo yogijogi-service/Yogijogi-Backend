@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.controller;
 
+import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
@@ -46,8 +47,8 @@ public class SignController {
     }
 
     @PostMapping("/sign-up")
-    ResponseEntity<ResultDto> SignUp (SignReqeustDto signReqeustDto, HttpServletRequest request){
-        ResultDto resultDto = signService.SignUp(signReqeustDto, request);
+    ResponseEntity<ResultDto> SignUp (SignReqeustDto signReqeustDto, AgreementDto agreementDto , HttpServletRequest request){
+        ResultDto resultDto = signService.SignUp(signReqeustDto,agreementDto, request);
         return ResponseEntity.status(resultDto.isSuccess()?HttpStatus.OK:HttpStatus.BAD_REQUEST).body(resultDto);
     }
 
