@@ -29,14 +29,4 @@ public class MemberAgreement {
     @OneToOne(mappedBy = "memberAgreement")
     private Member member;
 
-    public static MemberAgreement saveAgreement(AgreementDto agreementDto) {
-        return MemberAgreement.builder()
-                .allAgreement(agreementDto.isAllAgreement())
-                .consentPersonalInfo(agreementDto.isConsentPersonalInfo())
-                .consentServiceUser(agreementDto.isConsentServiceUser())
-                .consentToReceivingMail(agreementDto.isConsentToReceivingMail())
-                .consentToThirdPartyOffers(agreementDto.isConsentToThirdPartyOffers())
-                .build();
-
-    }
 }
