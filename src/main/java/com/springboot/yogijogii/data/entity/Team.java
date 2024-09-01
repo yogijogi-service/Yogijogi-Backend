@@ -1,12 +1,10 @@
 package com.springboot.yogijogii.data.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -14,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Builder
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +58,9 @@ public class Team {
 
     private String teamLevel;
 
-    private String teamIntro;
+    private LocalDateTime create_At;
+
+    private LocalDateTime update_At;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(nullable = false)

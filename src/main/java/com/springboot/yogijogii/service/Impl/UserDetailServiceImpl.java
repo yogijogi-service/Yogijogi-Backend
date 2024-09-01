@@ -4,6 +4,7 @@ package com.springboot.yogijogii.service.Impl;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,18 +18,13 @@ import javax.persistence.TypedQuery;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserDetailServiceImpl implements UserDetailsService {
 
-    private Logger logger = LoggerFactory.getLogger(UserDetailServiceImpl.class);
-
-    private final MemberRepository memberRepository;
-
-    @PersistenceContext
-    private EntityManager em;
-
+    private  final EntityManager em;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        logger.info("[loadUserByPhoneNum] : {} ", email);
+        log.info("[loadUserByPhoneNum] : {} ", email);
 
         TypedQuery<Member> query = em.createQuery(
                 "SELECT m FROM Member m LEFT JOIN FETCH m.memberRoles WHERE m.email = :email",

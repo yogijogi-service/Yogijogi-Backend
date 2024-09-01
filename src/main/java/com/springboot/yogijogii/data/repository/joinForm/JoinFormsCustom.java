@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.data.repository.JoinForm;
+package com.springboot.yogijogii.data.repository.joinForm;
 
 
 

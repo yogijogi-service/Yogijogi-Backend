@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
@@ -9,6 +10,7 @@ import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
@@ -32,6 +34,7 @@ public class SignServiceImpl implements SignService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final MemberRoleDao memberRoleDao;
 
     @Override
     public ResultDto SignUpSmsVerify(String certificationNumber, HttpServletRequest request) {
@@ -98,7 +101,7 @@ public class SignServiceImpl implements SignService {
 
     @Override
     public SignInResultDto SignIn(String email, String password) {
-        Member member = memberRepository.findByEmail(email);
+        Member member = memberRepository.getByEmail(email);
 
         if (member == null) {
             throw new RuntimeException("Member not found");
@@ -111,7 +114,7 @@ public class SignServiceImpl implements SignService {
         log.info("[getSignInResult] 패스워드 일치");
         // 토큰 생성
         String accessToken = jwtProvider.createToken(
-                String.valueOf(member.getPhoneNum()),
+                String.valueOf(member.getEmail()),
                 member.getMemberRoles().stream()
                         .map(MemberRole::getRole)
                         .collect(Collectors.toList())

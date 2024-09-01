@@ -31,11 +31,12 @@ public class JwtProvider {
 
 
     @Value("${springboot.jwt.secret}")  // 시크릿 키
-    private String secretKey = "asdqwe12321s@!#"; // 임시 시크릿 키
+    private String secretKey; // 임시 시크릿 키
 
 
     @Value("${springboot.jwt.refresh-secret}")
     private String refreshSecretKey;
+
     private final long tokenValidTime = 1000*60*60;
     private final long refreshTokenValidTime = 1000 * 60 * 60 * 24 * 7; // 7일
 
@@ -67,6 +68,9 @@ public class JwtProvider {
     // jwt토큰 생성
     public String createToken(String email, List<String> roles){
         Claims claims = Jwts.claims().setSubject(email);
+        logger.info("[email] : {}", email);
+        logger.info("[claims] : {}", claims);
+
         claims.put("roles",roles);
 
         Date now = new Date();

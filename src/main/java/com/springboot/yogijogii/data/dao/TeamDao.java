@@ -1,0 +1,7 @@
+package com.springboot.yogijogii.data.dao;
+
+import com.springboot.yogijogii.data.entity.Team;
+
+public interface TeamDao {
+    void save(Team team);
+}

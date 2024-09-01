@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.data.repository.JoinForm;
+package com.springboot.yogijogii.data.repository.joinForm;
 
 
 import com.springboot.yogijogii.data.entity.JoinForms;
