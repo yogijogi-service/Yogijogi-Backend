@@ -6,6 +6,8 @@ import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;
+import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,4 +79,11 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
+    private void saveMemberRole(Member member, Team team , String role){
+        MemberRole memberRole = new MemberRole();
+        memberRole.setMember(member);
+        memberRole.setTeam(team);
+        memberRole.setRole(role);
+
+    }
 }
