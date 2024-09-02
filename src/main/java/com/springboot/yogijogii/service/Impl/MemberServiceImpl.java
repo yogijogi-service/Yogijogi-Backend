@@ -1,18 +1,24 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
+import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
+import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
+import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
+import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 @Service
@@ -20,6 +26,9 @@ import java.time.LocalDateTime;
 public class MemberServiceImpl implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final MemberDao memberDao;
+
 
     @Override
     public  Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
@@ -77,6 +86,56 @@ public class MemberServiceImpl implements MemberService {
                 .consentToThirdPartyOffers(agreementDto.isConsentToThirdPartyOffers())
                 .build();
 
+    }
+
+    @Override
+    public MemberResponseDto getUser(HttpServletRequest servletRequest) {
+        String token = jwtProvider.resolveToken(servletRequest);
+        String email = jwtProvider.getUsername(token);
+        Member member = memberDao.findMemberByEmail(email);
+
+        MemberResponseDto memberResponseDto = new MemberResponseDto();
+        if(jwtProvider.validToken(token)){
+            memberResponseDto.setMemberId(member.getMemberId());
+            memberResponseDto.setAddress(member.getAddress());
+            memberResponseDto.setBirthDate(member.getBirthDate());
+            memberResponseDto.setGender(member.getGender());
+            memberResponseDto.setEmail(member.getEmail());
+            memberResponseDto.setLevel(member.getLevel());
+            memberResponseDto.setHasExperience(member.isHasExperience());
+            memberResponseDto.setLoginMethod(member.getLoginMethod());
+            memberResponseDto.setName(member.getName());
+            memberResponseDto.setPhoneNum(member.getPhoneNum());
+            memberResponseDto.setProfileUrl(member.getProfileUrl());
+            memberResponseDto.setCreate_At(String.valueOf(member.getCreate_At()));
+            memberResponseDto.setUpdate_At(String.valueOf(member.getUpdate_At()));
+        }
+        return memberResponseDto;
+    }
+
+    @Override
+    public ResultDto updateUser(HttpServletRequest servletRequest, MemberRequestDto requestDto) {
+        String token = jwtProvider.resolveToken(servletRequest);
+        String email = jwtProvider.getUsername(token);
+        Member member = memberDao.findMemberByEmail(email);
+        ResultDto resultDto = new ResultDto();
+        if(requestDto.getPassword().equals(requestDto.getPasswordCheck())){
+            if(jwtProvider.validToken(token)){
+                member.setPhoneNum(requestDto.getPhoneNum());
+                member.setEmail(requestDto.getEmail());
+                member.setPassword(requestDto.getPassword());
+                member.setPasswordCheck(requestDto.getPasswordCheck());
+                member.setBirthDate(requestDto.getBirtDate());
+                member.setGender(requestDto.getGender());
+                memberDao.save(member);
+                resultDto.setSuccess(true);
+                resultDto.setMsg("프로필 수정을 완료하였습니다.");
+            }
+        }else {
+            resultDto.setSuccess(false);
+            resultDto.setMsg("비밀번호가 일치하지 않습니다.");
+        }
+        return resultDto;
     }
 
     private void saveMemberRole(Member member, Team team , String role){

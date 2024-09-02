@@ -58,9 +58,6 @@ public class Member implements UserDetails {
 
     private boolean hasExperience;  // 선수경험
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> position;   //포지션
-
     private String loginMethod;
 
     private boolean verified = false;
