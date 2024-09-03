@@ -1,6 +1,7 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.S3.S3Uploader;
+import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
@@ -31,6 +32,7 @@ public class TeamServiceImpl implements TeamService {
     private final S3Uploader s3Uploader;
     private final JwtProvider jwtProvider;
     private final TeamDao teamDao;
+    private final MemberDao memberDao;
     private final MemberRoleDao memberRoleDao;
 
     @Override
@@ -57,6 +59,9 @@ public class TeamServiceImpl implements TeamService {
             team.setMember(member);
             teamDao.save(team);
             addMemberRoleManager(member,team);
+            member.setTeam(team);
+            memberDao.save(member);
+
             resultDto.setDetailMessage("팀 생성 완료.");
             setSuccess(resultDto);
         }else{

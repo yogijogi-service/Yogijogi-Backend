@@ -65,6 +65,7 @@ public class MemberServiceImpl implements MemberService {
                 .loginMethod("Normal")
                 .gender(signReqeustDto.getGender())
                 .name(signReqeustDto.getName())
+                .address(signReqeustDto.getAddress())
                 .create_At(LocalDateTime.now())
                 .update_At(LocalDateTime.now())
                 .build();

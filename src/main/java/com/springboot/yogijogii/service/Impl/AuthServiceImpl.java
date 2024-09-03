@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.springboot.yogijogii.data.dao.AuthDao;
+import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.entity.Member;
+import com.springboot.yogijogii.data.entity.ServiceRole;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.service.AuthService;
@@ -37,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final MemberRoleDao memberRoleDao;
 
 
     @Value("${kakao.client.id}")
@@ -135,6 +138,7 @@ public class AuthServiceImpl implements AuthService {
         if (member == null) {
             member = memberService.createKakaoUser(kakaoUserInfoResponse);
             authDao.KakaoMemberSave(member);
+            addServiceRoleManager(member);
             setSuccess(signInResultDto);
             signInResultDto.setDetailMessage("회원가입 완료.");
         } else {
@@ -211,5 +215,14 @@ public class AuthServiceImpl implements AuthService {
         setFail(signInResultDto);
         signInResultDto.setDetailMessage(errorMessage);
         throw new RuntimeException(errorMessage);
+    }
+    private void addServiceRoleManager(Member member){
+        ServiceRole serviceRole = new ServiceRole();
+        serviceRole.setMember(member);
+        serviceRole.setRole("Role_User");
+        member.getServiceRoles().add(serviceRole);
+        memberRoleDao.saveServiceRole(serviceRole);
+        member.setServiceRole("Role_User");
+        authDao.KakaoMemberSave(member);
     }
 }

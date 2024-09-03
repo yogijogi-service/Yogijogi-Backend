@@ -20,6 +20,9 @@ public class SignReqeustDto {
 
     private String level;
 
+    private String address;
+
     private boolean hasExperience;
+
 
 }
