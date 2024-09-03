@@ -62,6 +62,8 @@ public class Member implements UserDetails {
 
     private boolean verified = false;
 
+    private String serviceRole;
+
     @Column(length = 512)
     private String refreshToken;
 
