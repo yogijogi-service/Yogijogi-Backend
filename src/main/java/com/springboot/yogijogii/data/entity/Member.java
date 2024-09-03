@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,6 +62,8 @@ public class Member implements UserDetails {
     private String loginMethod;
 
     private boolean verified = false;
+
+    private String serviceRole;
 
     @Column(length = 512)
     private String refreshToken;
@@ -123,6 +126,9 @@ public class Member implements UserDetails {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<MemberRole> memberRoles;
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<ServiceRole> serviceRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
     private List<JoinForms> joinForms;
