@@ -40,35 +40,35 @@ public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
         if (CollectionUtils.isEmpty(regions)) {
             return null;
         }
-        return team.region.in(regions); // 다중 값 지원
+        return team.region.in(regions);
     }
 
     private BooleanExpression eqGender(List<String> genders) {
         if (CollectionUtils.isEmpty(genders)) {
             return null;
         }
-        return team.teamGender.in(genders); // 다중 값 지원
+        return team.teamGender.in(genders);
     }
 
     private BooleanExpression eqLevel(List<String> levels) {
         if (CollectionUtils.isEmpty(levels)) {
             return null;
         }
-        return team.teamLevel.in(levels); // 다중 값 지원
+        return team.teamLevel.in(levels);
     }
 
     private BooleanExpression eqAgeRange(List<String> ageRanges) {
         if (CollectionUtils.isEmpty(ageRanges)) {
             return null;
         }
-        return team.teamLevel.in(ageRanges); // 다중 값 지원
+        return team.teamLevel.in(ageRanges);
     }
 
     private BooleanExpression eqActivityTime(List<String> activityTimes) {
         if (CollectionUtils.isEmpty(activityTimes)) {
             return null;
         }
-        return team.activityTime.any().in(activityTimes); // 다중 값 지원
+        return team.activityTime.any().in(activityTimes);
     }
 
     private BooleanExpression eqActivityDays(List<String> activityDays) {
