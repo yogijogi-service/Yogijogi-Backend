@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.data.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
@@ -73,6 +74,7 @@ public class Team {
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     @BatchSize(size=10) // 예시로 설정한 값. 실제 적용에 맞게 변경
+    @JsonIgnore
     private List<MemberRole> memberRoles;
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)

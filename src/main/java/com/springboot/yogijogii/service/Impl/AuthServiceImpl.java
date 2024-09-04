@@ -225,4 +225,5 @@ public class AuthServiceImpl implements AuthService {
         member.setServiceRole("Role_User");
         authDao.KakaoMemberSave(member);
     }
+
 }
