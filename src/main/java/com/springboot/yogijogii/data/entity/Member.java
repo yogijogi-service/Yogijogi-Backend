@@ -1,9 +1,7 @@
 package com.springboot.yogijogii.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
@@ -127,16 +125,10 @@ public class Member implements UserDetails {
     private Team team;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<MemberRole> memberRoles;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<ServiceRole> serviceRoles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<JoinForms> joinForms;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "memberAgreement_id", referencedColumnName = "id")
