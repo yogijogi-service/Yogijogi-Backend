@@ -54,4 +54,9 @@ public class JoinTeamServiceImpl implements JoinTeamService {
         }
         return resultDto;
     }
+
+    @Override
+    public ResultDto joinTeamByInviteCode(JoinTeamService joinTeamService, String inviteCode) {
+        return null;
+    }
 }
