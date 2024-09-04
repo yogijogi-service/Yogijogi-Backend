@@ -7,6 +7,7 @@ import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
+import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
@@ -70,6 +71,25 @@ public class TeamServiceImpl implements TeamService {
         }
 
         return resultDto;
+    }
+
+    @Override
+    public TeamResponseDto getTeam(HttpServletRequest servletRequest, Long teamId) {
+        Team team = teamDao.findByTeamId(teamId);
+        TeamResponseDto teamResponseDto = new TeamResponseDto();
+        teamResponseDto.setTeamName(team.getTeamName());
+        teamResponseDto.setTeam_introduce(team.getTeam_introduce());
+        teamResponseDto.setRegion(team.getRegion());
+        teamResponseDto.setTown(team.getTown());
+        teamResponseDto.setMatchLocation(team.getMatchLocation());
+        teamResponseDto.setDues(team.getDues());
+        teamResponseDto.setTeamGender(teamResponseDto.getTeamGender());
+        teamResponseDto.setAgeRange(team.getAgeRange());
+        teamResponseDto.setTeamLevel(team.getTeamLevel());
+        teamResponseDto.setActivityDays(team.getActivityDays());
+        teamResponseDto.setActivityTime(team.getActivityTime());
+        teamResponseDto.setPositionRequired(team.getPositionRequired());
+        return teamResponseDto;
     }
 
     @Override
