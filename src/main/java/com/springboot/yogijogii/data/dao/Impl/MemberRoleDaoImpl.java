@@ -1,8 +1,10 @@
 package com.springboot.yogijogii.data.dao.Impl;
 
 import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.ServiceRole;
+import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.ServiceRoleRepository;
 import com.springboot.yogijogii.data.repository.memberRole.MemberRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +24,15 @@ public class MemberRoleDaoImpl implements MemberRoleDao {
     @Override
     public void saveServiceRole(ServiceRole serviceRole) {
         serviceRoleRepository.save(serviceRole);
+    }
+
+    @Override
+    public boolean existsByMemberAndTeamAndRole(Member member, Team team, String role) {
+        return memberRoleRepository.existsByMemberAndTeamAndRole(member, team, role);
+    }
+
+    @Override
+    public boolean existsByMemberAndTeam(Member member, Team team) {
+        return memberRoleRepository.existsByMemberAndTeam(member, team);
     }
 }

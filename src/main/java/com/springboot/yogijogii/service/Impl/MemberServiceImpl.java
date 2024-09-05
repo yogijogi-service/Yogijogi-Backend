@@ -12,6 +12,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
+import com.springboot.yogijogii.data.repository.memberRole.MemberRoleRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final MemberDao memberDao;
-
+    private final MemberRoleRepository memberRoleRepository;
 
     @Override
     public  Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
@@ -144,6 +145,5 @@ public class MemberServiceImpl implements MemberService {
         memberRole.setMember(member);
         memberRole.setTeam(team);
         memberRole.setRole(role);
-
     }
 }
