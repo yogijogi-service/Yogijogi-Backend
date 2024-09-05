@@ -22,4 +22,10 @@ public class TeamDaoImpl implements TeamDao {
         Team team = teamRepository.findByTeamId(teamId);
         return team;
     }
+
+    @Override
+    public Team findByInviteCode(String inviteCode) {
+        Team team = teamRepository.findByInviteCode(inviteCode);
+        return team;
+    }
 }

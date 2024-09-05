@@ -38,4 +38,6 @@ public class JoinTeam {
     private String position;
 
     private String joinReason;
+
+    private String status;
 }

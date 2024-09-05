@@ -6,6 +6,8 @@ import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MemberDaoImpl implements MemberDao {
@@ -14,6 +16,11 @@ public class MemberDaoImpl implements MemberDao {
     @Override
     public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<Member> findMemberByID(Long memberId) {
+        return memberRepository.findById(memberId);
     }
 
     @Override
