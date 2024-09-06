@@ -49,12 +49,10 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
                 .antMatchers("/api/team/**","api/search/**").authenticated()
                 .antMatchers("/teamDetail-api/play-registration").hasRole("MANAGER")
                 .antMatchers("**exception**").permitAll()
-
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                         UsernamePasswordAuthenticationFilter.class); // JWT Token 필터를 id/password 인증 필터 이전에 추가

@@ -3,8 +3,6 @@ package com.springboot.yogijogii.data.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
-import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.BatchSize;

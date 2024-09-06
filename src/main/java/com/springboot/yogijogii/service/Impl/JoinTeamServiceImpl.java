@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.springboot.yogijogii.data.entity.QTeam.team;
-
 @Service
 @RequiredArgsConstructor
 public class JoinTeamServiceImpl implements JoinTeamService {
