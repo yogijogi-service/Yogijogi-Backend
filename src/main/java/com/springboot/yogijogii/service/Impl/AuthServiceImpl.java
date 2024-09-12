@@ -178,7 +178,14 @@ public class AuthServiceImpl implements AuthService {
         if (jwtProvider.validRefreshToken(refreshToken)) {
             String email = jwtProvider.getUsernameFromRefreshToken(refreshToken);
             String newAccessToken = jwtProvider.createToken(email, List.of("ROLE_USER"));
-            return ResponseEntity.ok(newAccessToken);
+
+            // 리프레시 토큰의 유효 기간이 하루 미만일 경우, 새로운 리프레시 토큰을 발급
+            if (jwtProvider.getExpirationDuration(refreshToken) < 1000 * 60 * 60 * 24) {
+                String newRefreshToken = jwtProvider.createRefreshToken(email);
+                return ResponseEntity.ok(Map.of("accessToken", newAccessToken, "refreshToken", newRefreshToken));
+            } else {
+                return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+            }
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Refresh Token");
         }
