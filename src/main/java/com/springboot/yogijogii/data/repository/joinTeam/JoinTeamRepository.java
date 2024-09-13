@@ -8,6 +8,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JoinTeamRepository extends JpaRepository<JoinTeam, Long> {
@@ -17,4 +18,8 @@ public interface JoinTeamRepository extends JpaRepository<JoinTeam, Long> {
     JoinTeam findJoinTeamByJoinTeamId(Long joinTeamId);
 
     boolean existsByTeamAndMemberAndStatus(Team team, Member member, String pending);
+
+    List<JoinTeam> findByTeamIdAndStatusAndPosition(Long teamId, String pending, String position);
+
+    List<JoinTeam> findByTeamIdAndStatus(Long teamId, String pending);
 }

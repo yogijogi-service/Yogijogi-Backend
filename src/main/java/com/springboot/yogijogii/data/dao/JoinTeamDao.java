@@ -6,6 +6,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;
 import org.hibernate.mapping.Join;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JoinTeamDao {
@@ -18,4 +19,8 @@ public interface JoinTeamDao {
     JoinTeam findByJoinTeamId(Long joinTeamId);
 
     boolean existsByTeamAndMemberAndStatus(Team team, Member member, String pending);
+
+    List<JoinTeam> findByTeamIdAndStatusAndPosition(Long teamId, String pending, String position);
+
+    List<JoinTeam> findByTeamIdAndStatus(Long teamId, String pending);
 }

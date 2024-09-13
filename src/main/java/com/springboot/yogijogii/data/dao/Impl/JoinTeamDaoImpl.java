@@ -10,6 +10,7 @@ import com.springboot.yogijogii.data.repository.joinTeam.JoinTeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,5 +43,17 @@ public class JoinTeamDaoImpl implements JoinTeamDao {
     @Override
     public boolean existsByTeamAndMemberAndStatus(Team team, Member member, String pending) {
         return joinTeamRepository.existsByTeamAndMemberAndStatus(team, member, pending);
+    }
+
+    @Override
+    public List<JoinTeam> findByTeamIdAndStatusAndPosition(Long teamId, String pending, String position) {
+        List<JoinTeam> joinTeamList = joinTeamRepository.findByTeamIdAndStatusAndPosition(teamId, pending, position);
+        return joinTeamList;
+    }
+
+    @Override
+    public List<JoinTeam> findByTeamIdAndStatus(Long teamId, String pending) {
+        List<JoinTeam> joinTeamList = joinTeamRepository.findByTeamIdAndStatus(teamId, pending);
+        return joinTeamList;
     }
 }
