@@ -35,27 +35,5 @@ public class JoinTeamController {
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 
-    @GetMapping("/requestDetail/{requestId}")
-    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-    ResponseEntity<JoinTeamResponseDto> requestDetail(HttpServletRequest servletRequest, @PathVariable Long requestId) {
-        JoinTeamResponseDto joinTeamResponseDto = joinTeamService.requestDetail(servletRequest, requestId);
-        return ResponseEntity.status(HttpStatus.OK).body(joinTeamResponseDto);
-    }
 
-
-    @PostMapping("/{teamId}/accept/{memberId}")
-    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-    public ResponseEntity<ResultDto> acceptJoinRequest(HttpServletRequest servletRequest, @PathVariable Long teamId, @PathVariable Long memberId) throws Exception {
-        // 팀 가입 수락
-        ResultDto resultDto = joinTeamService.processJoinRequest(servletRequest, teamId, memberId, true);
-        return ResponseEntity.ok(resultDto);
-    }
-
-    @PostMapping("/{teamId}/deny/{memberId}")
-    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-    public ResponseEntity<ResultDto> denyJoinRequest(HttpServletRequest servletRequest, @PathVariable Long teamId, @PathVariable Long memberId) throws Exception {
-        // 팀 가입 거절
-        ResultDto resultDto = joinTeamService.processJoinRequest(servletRequest, teamId, memberId, false);
-        return ResponseEntity.ok(resultDto);
-    }
 }

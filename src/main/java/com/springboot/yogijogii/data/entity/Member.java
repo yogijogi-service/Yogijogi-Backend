@@ -109,13 +109,6 @@ public class Member implements UserDetails {
         return true;
     }
 
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> joinTeam;
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> createTeam;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @BatchSize(size=1)

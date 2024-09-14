@@ -1,12 +1,14 @@
 package com.springboot.yogijogii.data.dto.joinTeamDto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class JoinTeamResponseDto {
 
     private String name;
@@ -26,4 +28,6 @@ public class JoinTeamResponseDto {
     private Long memberId;
 
     private Long teamId;
+
+    private String profileUrl;
 }
