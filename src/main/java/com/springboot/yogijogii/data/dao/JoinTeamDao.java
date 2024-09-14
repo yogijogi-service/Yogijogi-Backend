@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.data.dao;
 
+import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
@@ -20,7 +21,7 @@ public interface JoinTeamDao {
 
     boolean existsByTeamAndMemberAndStatus(Team team, Member member, String pending);
 
-    List<JoinTeam> findByTeamIdAndStatusAndPosition(Long teamId, String pending, String position);
+    List<JoinTeam> findByTeamAndStatusAndPosition(Team team, String pending, String position);
 
-    List<JoinTeam> findByTeamIdAndStatus(Long teamId, String pending);
+    List<JoinTeam> findByTeamAndStatus(Team team, String pending);
 }

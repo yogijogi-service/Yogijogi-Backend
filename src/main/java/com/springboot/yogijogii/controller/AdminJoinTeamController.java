@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.controller;
 
+import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.service.AdminJoinTeamService;
@@ -14,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-
 @RequestMapping("/api/admin/joinTeam")
 public class AdminJoinTeamController {
 
@@ -29,10 +29,10 @@ public class AdminJoinTeamController {
 
     @GetMapping("/getPendingRequests/{teamId}")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-    public ResponseEntity<List<JoinTeamResponseDto>> getPendingRequests(HttpServletRequest servletRequest,
+    public ResponseEntity<List<JoinTeamListResponseDto>> getPendingRequests(HttpServletRequest servletRequest,
                                                                         @PathVariable Long teamId,
                                                                         @RequestParam(defaultValue = "전체") String position) {
-        List<JoinTeamResponseDto> pendingRequests = adminJoinTeamService.getPendingRequests(servletRequest, teamId, position);
+        List<JoinTeamListResponseDto> pendingRequests = adminJoinTeamService.getPendingRequests(servletRequest, teamId, position);
         return ResponseEntity.status(HttpStatus.OK).body(pendingRequests);
     }
 

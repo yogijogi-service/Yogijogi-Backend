@@ -4,6 +4,7 @@ import com.springboot.yogijogii.data.dao.JoinTeamDao;
 import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
+import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -97,6 +99,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             joinTeamResponseDto.setJoinReason(joinTeam.getJoinReason());
             joinTeamResponseDto.setMemberId(joinTeam.getMember().getMemberId());
             joinTeamResponseDto.setTeamId(joinTeam.getTeam().getTeamId());
+            joinTeamResponseDto.setProfileUrl(joinTeam.getMember().getProfileUrl());
         } catch (IllegalAccessError e) {
             throw new SecurityException("권한이 없습니다: " + e.getMessage());
         }
@@ -104,16 +107,25 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
     }
 
     @Override
-    public List<JoinTeamResponseDto> getPendingRequests(HttpServletRequest servletRequest, Long teamId, String position) {
+    public List<JoinTeamListResponseDto> getPendingRequests(HttpServletRequest servletRequest, Long teamId, String position) {
         List<JoinTeam> joinRequests;
 
+        Team team = teamDao.findByTeamId(teamId);
+
         if ("전체".equals(position)) {
-            joinRequests = joinTeamDao.findByTeamIdAndStatus(teamId, "PENDING");
+            joinRequests = joinTeamDao.findByTeamAndStatus(team, "PENDING");
         } else {
-            joinRequests = joinTeamDao.findByTeamIdAndStatusAndPosition(teamId, "PENDING", position);
+            joinRequests = joinTeamDao.findByTeamAndStatusAndPosition(team, "PENDING", position);
         }
 
-        return null;
+        return joinRequests.stream()
+                .map(request -> JoinTeamListResponseDto.builder()
+                        .joinTeamId(request.getJoinTeamId())
+                        .profileUrl(request.getMember().getProfileUrl())
+                        .name(request.getName())
+                        .position(request.getPosition())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }

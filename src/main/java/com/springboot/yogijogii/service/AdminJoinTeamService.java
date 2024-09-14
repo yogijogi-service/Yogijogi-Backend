@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.service;
 
+import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 
@@ -11,5 +12,5 @@ public interface AdminJoinTeamService {
 
     JoinTeamResponseDto requestDetail(HttpServletRequest servletRequest, Long joinTeamId);
 
-    List<JoinTeamResponseDto> getPendingRequests(HttpServletRequest servletRequest, Long teamId, String position);
+    List<JoinTeamListResponseDto> getPendingRequests(HttpServletRequest servletRequest, Long teamId, String position);
 }
