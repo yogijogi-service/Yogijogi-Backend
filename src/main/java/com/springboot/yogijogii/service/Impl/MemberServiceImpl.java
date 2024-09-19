@@ -125,8 +125,8 @@ public class MemberServiceImpl implements MemberService {
             if(jwtProvider.validToken(token)){
                 member.setPhoneNum(requestDto.getPhoneNum());
                 member.setEmail(requestDto.getEmail());
-                member.setPassword(requestDto.getPassword());
-                member.setPasswordCheck(requestDto.getPasswordCheck());
+                member.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+                member.setPasswordCheck(passwordEncoder.encode(requestDto.getPasswordCheck()));
                 member.setBirthDate(requestDto.getBirtDate());
                 member.setGender(requestDto.getGender());
                 memberDao.save(member);
