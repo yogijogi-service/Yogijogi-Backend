@@ -60,6 +60,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             memberRole.setMember(requestedMember);
             memberRole.setTeam(team);
             memberRole.setRole("Role_Member");
+            memberRole.setPosition(joinRequest.getPosition());
             memberRoleDao.saveMemberRole(memberRole);
 
             // 가입 요청 삭제

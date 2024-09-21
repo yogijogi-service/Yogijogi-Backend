@@ -80,7 +80,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
     }
 
     @Override
-    public ResultDto joinTeamByInviteCode(HttpServletRequest servletRequest, String inviteCode) {
+    public ResultDto joinTeamByInviteCode(HttpServletRequest servletRequest, String inviteCode, String position) {
         ResultDto resultDto = new ResultDto();
 
         try {
@@ -96,6 +96,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
                     .member(member)
                     .team(team)
                     .role("Role_Member")
+                    .position(position)
                     .build());
             resultDto.setSuccess(true);
             resultDto.setMsg("초대코드로 팀가입에 성공하였습니다.");

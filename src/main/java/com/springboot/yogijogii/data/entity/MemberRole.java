@@ -30,4 +30,6 @@ public class MemberRole {
 
     @Column(nullable = false)
     private String role;
+
+    private String position;
 }

@@ -5,7 +5,6 @@ import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
 import com.springboot.yogijogii.service.TeamService;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

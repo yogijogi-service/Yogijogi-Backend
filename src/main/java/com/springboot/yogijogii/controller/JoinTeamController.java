@@ -30,8 +30,8 @@ public class JoinTeamController {
 
     @PostMapping("/inviteCode")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-    ResponseEntity<ResultDto> joinTeamByInviteCode(HttpServletRequest servletRequest, String inviteCode){
-        ResultDto resultDto = joinTeamService.joinTeamByInviteCode(servletRequest, inviteCode);
+    ResponseEntity<ResultDto> joinTeamByInviteCode(HttpServletRequest servletRequest, String inviteCode, String position){
+        ResultDto resultDto = joinTeamService.joinTeamByInviteCode(servletRequest, inviteCode, position);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 
