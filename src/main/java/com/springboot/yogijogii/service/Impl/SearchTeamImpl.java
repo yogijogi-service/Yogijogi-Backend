@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
 import com.springboot.yogijogii.data.dto.teamDto.search.SearchTeamFilterRequestDto;
 import com.springboot.yogijogii.data.dto.teamDto.search.SearchTeamFilterResponseDto;
 import com.springboot.yogijogii.data.entity.Member;
@@ -56,6 +57,36 @@ public class SearchTeamImpl implements SearchTeam {
                         team.getMatchLocation()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public TeamResponseDto searchTeamByInviteCode(HttpServletRequest servletRequest, String inviteCode) {
+        // 초대 코드로 팀을 찾기
+        Team team = teamRepository.findByInviteCode(inviteCode);
+
+        if (team == null) {
+            // 팀이 없을 경우 예외 처리 (원하는 방식으로 처리)
+            log.error("팀을 찾을 수 없습니다. inviteCode: {}", inviteCode);
+            throw new IllegalArgumentException("해당 초대 코드로 팀을 찾을 수 없습니다.");
+        }
+
+        // 팀 정보를 TeamResponseDto로 변환하여 반환
+        TeamResponseDto teamResponseDto = new TeamResponseDto(
+                team.getTeamName(),
+                team.getTeam_introduce(),
+                team.getTeamImageUrl(),
+                team.getRegion(),
+                team.getTown(),
+                team.getMatchLocation(),
+                team.getDues(),
+                team.getActivityDays(),
+                team.getActivityTime(),
+                team.getTeamGender(),
+                team.getAgeRange(),
+                team.getTeamLevel(),
+                team.getPositionRequired()
+        );
+
+        return teamResponseDto;
     }
 
 }

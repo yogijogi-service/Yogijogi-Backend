@@ -78,6 +78,7 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamDao.findByTeamId(teamId);
         TeamResponseDto teamResponseDto = new TeamResponseDto();
         teamResponseDto.setTeamName(team.getTeamName());
+        teamResponseDto.setTeamImageUrl(team.getTeamImageUrl());
         teamResponseDto.setTeam_introduce(team.getTeam_introduce());
         teamResponseDto.setRegion(team.getRegion());
         teamResponseDto.setTown(team.getTown());

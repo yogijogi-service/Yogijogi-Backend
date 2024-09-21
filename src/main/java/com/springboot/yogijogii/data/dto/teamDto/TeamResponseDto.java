@@ -15,6 +15,8 @@ public class TeamResponseDto {
 
     private String team_introduce;
 
+    private String teamImageUrl;
+
     private String region;
 
     private String town;
