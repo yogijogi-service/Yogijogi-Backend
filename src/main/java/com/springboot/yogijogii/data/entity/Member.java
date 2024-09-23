@@ -128,6 +128,9 @@ public class Member implements UserDetails {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<ServiceRole> serviceRoles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Announcement> announcements = new ArrayList<>();
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "memberAgreement_id", referencedColumnName = "id")
     private MemberAgreement memberAgreement;

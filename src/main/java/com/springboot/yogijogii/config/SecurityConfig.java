@@ -3,8 +3,8 @@ package com.springboot.yogijogii.config;
 
 import com.springboot.yogijogii.handler.CustomAccessDeniedHandler;
 import com.springboot.yogijogii.handler.CustomAuthenticationEntryPoint;
-import com.springboot.yogijogii.jwt.JwtAuthenticationFilter;
-import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.jwt.Impl.JwtAuthenticationFilter;
+import com.springboot.yogijogii.jwt.Impl.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,7 +47,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
                 .antMatchers("/api/sign/**",
                         "/api/sign/exception","/main-api/**","/api/auth/**").permitAll() // 가입 및 로그인 주소는 허용
                 .antMatchers("/api/team/**","api/search/**").authenticated()
-                .antMatchers("/teamDetail-api/play-registration").hasRole("MANAGER")
+                .antMatchers("/api/announcement/manager/**").hasRole("MANAGER")
                 .antMatchers("**exception**").permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())

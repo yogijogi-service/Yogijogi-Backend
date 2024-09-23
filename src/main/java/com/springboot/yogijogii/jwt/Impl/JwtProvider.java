@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.jwt;
+package com.springboot.yogijogii.jwt.Impl;
 
 
 import io.jsonwebtoken.Claims;
@@ -72,7 +72,7 @@ public class JwtProvider {
         logger.info("[claims] : {}", claims);
 
         claims.put("roles",roles);
-
+        logger.info("[claims] roles: {}", claims.get("roles")); // roles 값을 확인
         Date now = new Date();
 
         String token = Jwts.builder()

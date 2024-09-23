@@ -1,6 +1,5 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
@@ -10,7 +9,7 @@ import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.*;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
-import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.jwt.Impl.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
 import com.springboot.yogijogii.service.SignService;
 import com.springboot.yogijogii.service.SmsService;

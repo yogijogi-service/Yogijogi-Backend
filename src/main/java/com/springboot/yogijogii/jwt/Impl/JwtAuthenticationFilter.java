@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.jwt;
+package com.springboot.yogijogii.jwt.Impl;
 
 
 import org.slf4j.Logger;

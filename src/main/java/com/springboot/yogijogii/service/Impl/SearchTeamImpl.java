@@ -8,7 +8,7 @@ import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.data.repository.team.TeamRepository;
 import com.springboot.yogijogii.exception.TeamNotFoundException;
 import com.springboot.yogijogii.exception.UnauthorizedException;
-import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.jwt.Impl.JwtProvider;
 import com.springboot.yogijogii.service.SearchTeam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

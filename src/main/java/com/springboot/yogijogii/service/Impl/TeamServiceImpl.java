@@ -12,7 +12,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
-import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.jwt.Impl.JwtProvider;
 import com.springboot.yogijogii.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -138,7 +138,7 @@ public class TeamServiceImpl implements TeamService {
         MemberRole memberRole = new MemberRole();
         memberRole.setMember(member);
         memberRole.setTeam(team);
-        memberRole.setRole("Role_Manager");
+        memberRole.setRole("ROLE_MANAGER");
         member.getMemberRoles().add(memberRole);
         memberRoleDao.saveMemberRole(memberRole);
     }

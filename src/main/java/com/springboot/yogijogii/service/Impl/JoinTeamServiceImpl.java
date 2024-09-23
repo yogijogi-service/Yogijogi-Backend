@@ -11,7 +11,7 @@ import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
-import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.jwt.Impl.JwtProvider;
 import com.springboot.yogijogii.service.JoinTeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
