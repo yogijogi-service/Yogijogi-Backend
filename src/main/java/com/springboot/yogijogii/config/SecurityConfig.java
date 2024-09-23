@@ -47,7 +47,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
                 .antMatchers("/api/sign/**",
                         "/api/sign/exception","/main-api/**","/api/auth/**").permitAll() // 가입 및 로그인 주소는 허용
                 .antMatchers("/api/team/**","api/search/**").authenticated()
-                .antMatchers("/teamDetail-api/play-registration").hasRole("MANAGER")
+                .antMatchers("/api/announcement/manager/**").hasRole("MANAGER")
                 .antMatchers("**exception**").permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())

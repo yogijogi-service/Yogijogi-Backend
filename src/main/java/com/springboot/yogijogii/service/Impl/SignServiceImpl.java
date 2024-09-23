@@ -1,6 +1,5 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;

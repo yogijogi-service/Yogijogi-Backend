@@ -1,7 +1,6 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.MemberDao;
-import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;

@@ -139,7 +139,7 @@ public class TeamServiceImpl implements TeamService {
         MemberRole memberRole = new MemberRole();
         memberRole.setMember(member);
         memberRole.setTeam(team);
-        memberRole.setRole("Role_Manager");
+        memberRole.setRole("ROLE_MANAGER");
         member.getMemberRoles().add(memberRole);
         memberRoleDao.saveMemberRole(memberRole);
     }
