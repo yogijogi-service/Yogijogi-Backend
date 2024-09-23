@@ -38,7 +38,7 @@ public class AuthController {
                 "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s",
                 kakaoClientId,kakaoRedirectUrl
         );
-        response.put("kakaoUrl", url);
+        response.put("kakaoURL", url);
         return  response;
     }
 
