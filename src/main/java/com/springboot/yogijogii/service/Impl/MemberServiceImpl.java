@@ -12,7 +12,7 @@ import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.memberRole.MemberRoleRepository;
-import com.springboot.yogijogii.jwt.Impl.JwtProvider;
+import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

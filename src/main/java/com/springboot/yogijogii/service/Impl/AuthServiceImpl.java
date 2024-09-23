@@ -12,7 +12,7 @@ import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.ServiceRole;
-import com.springboot.yogijogii.jwt.Impl.JwtProvider;
+import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.service.AuthService;
 import com.springboot.yogijogii.service.MemberService;

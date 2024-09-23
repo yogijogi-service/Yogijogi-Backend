@@ -12,7 +12,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
-import com.springboot.yogijogii.jwt.Impl.JwtProvider;
+import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

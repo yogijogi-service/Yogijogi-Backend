@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.jwt.Impl;
+package com.springboot.yogijogii.jwt;
 
 
 import io.jsonwebtoken.Claims;

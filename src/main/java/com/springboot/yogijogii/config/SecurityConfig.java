@@ -3,8 +3,8 @@ package com.springboot.yogijogii.config;
 
 import com.springboot.yogijogii.handler.CustomAccessDeniedHandler;
 import com.springboot.yogijogii.handler.CustomAuthenticationEntryPoint;
-import com.springboot.yogijogii.jwt.Impl.JwtAuthenticationFilter;
-import com.springboot.yogijogii.jwt.Impl.JwtProvider;
+import com.springboot.yogijogii.jwt.JwtAuthenticationFilter;
+import com.springboot.yogijogii.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

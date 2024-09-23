@@ -4,12 +4,12 @@ package com.springboot.yogijogii.jwt.Impl;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
+import com.springboot.yogijogii.jwt.JwtProvider;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
