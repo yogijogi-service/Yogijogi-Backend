@@ -8,6 +8,7 @@ import com.springboot.yogijogii.service.AuthService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,11 +24,20 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    @Value("${kakao.client.id}")
+    private String kakaoClientId;
 
-    @GetMapping
+    @Value("${kakao.redirect.url}")
+    private String kakaoRedirectUrl;
+
+
+    @GetMapping("/kakao/get-url")
     public Map<String,String> getKakaoUrl(){
         Map<String, String> response = new HashMap<>();
-        String url =  "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=6de9c9ef1556266bf0bab36b47b7360d&redirect_uri=http://localhost:8080/api/auth/kakao/callback";
+        String url =  String.format(
+                "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s",
+                kakaoClientId,kakaoRedirectUrl
+        );
         response.put("kakaoUrl", url);
         return  response;
     }

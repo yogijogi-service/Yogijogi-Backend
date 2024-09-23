@@ -145,11 +145,13 @@ public class SignServiceImpl implements SignService {
         resultDto.setSuccess(true);
         resultDto.setCode(CommonResponse.SUCCESS.getCode());
         resultDto.setMsg(CommonResponse.SUCCESS.getMsg());
+
     }
     private void setFail(ResultDto resultDto){
         resultDto.setSuccess(false);
         resultDto.setCode(CommonResponse.Fail.getCode());
         resultDto.setMsg(CommonResponse.Fail.getMsg());
+        throw new IllegalArgumentException("인증 실패");
     }
 
     private void addServiceRoleManager(Member member) {
