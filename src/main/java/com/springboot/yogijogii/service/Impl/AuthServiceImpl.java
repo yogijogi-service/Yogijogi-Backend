@@ -1,12 +1,16 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.springboot.yogijogii.Result.ResultStatusService;
 import com.springboot.yogijogii.data.dao.AuthDao;
 import com.springboot.yogijogii.data.dao.MemberRoleDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
+import com.springboot.yogijogii.data.dto.authDto.GoogleResponseDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
@@ -24,6 +28,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final MemberRoleDao memberRoleDao;
+    private final ResultStatusService resultStatusService;
 
 
     @Value("${kakao.client.id}")
@@ -54,8 +60,24 @@ public class AuthServiceImpl implements AuthService {
     @Value("${kakao.userinfo.url}")
     private String kakaoUserInfoUrl;
 
+    @Value("${google.client.id}")
+    private String googleClientId;
+
+    @Value("${google.client.secret}")
+    private String googleClientSecret;
+
+    @Value("${google.redirect.url}")
+    private String googleRedirectUrl;
+
+    @Value("${google.userinfo.url}")
+    private String googleUserInfoUrl;
+
+    @Value("${google.accesstoken.url}")
+    private String googleAccessTokenUrl;
+
+
     @Override
-    public ResponseEntity<?> getKakaoUserInfo(String authorizeCode) {
+    public SignInResultDto getKakaoUserInfo(String authorizeCode) {
         log.info("[kakao login] issue a authorizeCode");
         ObjectMapper objectMapper = new ObjectMapper(); //json 파싱 객체
         RestTemplate restTemplate = new RestTemplate(); //client 연결 객체
@@ -83,15 +105,58 @@ public class AuthServiceImpl implements AuthService {
 
             Object accessToken = responseMap.get("access_token");
 
-            return ResponseEntity.ok(kakao_SignIn((String)accessToken));
+            return kakao_SignIn((String)accessToken);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get Kakao access token");
+            return null;
         }
     }
 
-    private KakaoResponseDto getInfo(String accessToken) {
+    @Override
+    public SignInResultDto getGoogleUserInfo(String authorizeCode) {
+        log.info("[google login] issue a authorizeCode: {}", authorizeCode);
+        ObjectMapper objectMapper = new ObjectMapper();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        httpHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", googleClientId);
+        params.add("client_secret", googleClientSecret);
+        params.add("redirect_uri", googleRedirectUrl);
+        params.add("code", authorizeCode);
+
+        HttpEntity<MultiValueMap<String, String>> googleTokenRequest = new HttpEntity<>(params, httpHeaders);
+        log.info("[google login] Google Access Token URL: {}", googleAccessTokenUrl);
+        log.info("[google login] Request Headers: {}", httpHeaders);
+        log.info("[google login] Request Parameters: {}", params);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    googleAccessTokenUrl,
+                    HttpMethod.POST,
+                    googleTokenRequest,
+                    String.class
+            );
+            log.info("[google login] authorizecode issued successfully");
+            log.info("Response: {}", response.getBody()); // 응답 본문 출력
+            Map<String,Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            log.info("[Response Map] : {}", responseMap);
+
+            String accessToken = (String) responseMap.get("access_token");
+            log.info("[accessToken] : {}", accessToken);
+
+            return google_SignIn(accessToken);
+
+        } catch (Exception e) {
+            log.error("An error occurred while fetching Google access token", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private KakaoResponseDto getKakaoInfo(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
         HttpHeaders headers = new HttpHeaders();
@@ -124,25 +189,56 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    private GoogleResponseDto getGoogleInfo(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        log.info("[accessToken] : {}", accessToken);
+
+        httpHeaders.add("Authorization", "Bearer " + accessToken);
+        httpHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        HttpEntity<?> entity = new HttpEntity<>(requestBody, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(googleUserInfoUrl, HttpMethod.GET, entity, String.class);
+
+        try {
+            Map<String,Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+
+            GoogleResponseDto googleResponseDto = GoogleResponseDto.builder()
+                    .name((String) responseMap.get("name"))
+                    .email((String) responseMap.get("email"))
+                    .profileUrl((String) responseMap.get("picture"))
+                    .build();
+
+            return googleResponseDto;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @Override
     public SignInResultDto kakao_SignIn(String accessToken) {
-        KakaoResponseDto kakaoUserInfoResponse = getInfo(accessToken);
+        KakaoResponseDto kakaoUserInfoResponse = getKakaoInfo(accessToken);
 
         SignInResultDto signInResultDto = new SignInResultDto();
         if (kakaoUserInfoResponse == null) {
             return handleSignInFailure(signInResultDto, "Failed to get Kakao user info");
         }
 
-        Member member = authDao.kakaoUserFind(kakaoUserInfoResponse.getEmail());
+        Member member = authDao.findMember(kakaoUserInfoResponse.getEmail());
 
         if (member == null) {
             member = memberService.createKakaoUser(kakaoUserInfoResponse);
-            authDao.KakaoMemberSave(member);
+            member.setServiceRole("ROLE_USER");
+            authDao.saveMember(member);
             addServiceRoleManager(member);
-            setSuccess(signInResultDto);
+            resultStatusService.setSuccess(signInResultDto);
             signInResultDto.setDetailMessage("회원가입 완료.");
         } else {
-            setSuccess(signInResultDto);
+            resultStatusService.setSuccess(signInResultDto);
             signInResultDto.setDetailMessage("로그인 성공.");
         }
 
@@ -159,13 +255,64 @@ public class AuthServiceImpl implements AuthService {
             // 기존 Refresh Token이 없거나 만료되었으면 새로 발급
             refreshToken = jwtProvider.createRefreshToken(member.getEmail());
             member.setRefreshToken(refreshToken); // 새로운 Refresh Token을 DB에 저장 (필요할 경우)
-            authDao.KakaoMemberSave(member); // 변경 사항 저장
+            authDao.saveMember(member); // 변경 사항 저장
         }
 
         signInResultDto.setToken(accessTokenNew);
         signInResultDto.setRefreshToken(refreshToken); // 최종 Refresh Token 설정
 
-        setSuccess(signInResultDto);
+        resultStatusService.setSuccess(signInResultDto);
+        signInResultDto.setDetailMessage("로그인 성공.");
+        log.info("[SignIn] SignInResultDto: {}", signInResultDto);
+
+        return signInResultDto;
+
+    }
+
+
+    @Override
+    public SignInResultDto google_SignIn(String accessToken) {
+        GoogleResponseDto googleResponseDto = getGoogleInfo(accessToken);
+
+        SignInResultDto signInResultDto = new SignInResultDto();
+        if (googleResponseDto == null) {
+            return handleSignInFailure(signInResultDto, "Failed to get Kakao user info");
+        }
+
+        Member member = authDao.findMember(googleResponseDto.getEmail());
+
+        if (member == null) {
+            member = memberService.createGoogleUser(googleResponseDto);
+            member.setServiceRole("ROLE_USER");
+            authDao.saveMember(member);
+            addServiceRoleManager(member);
+            resultStatusService.setSuccess(signInResultDto);
+            signInResultDto.setDetailMessage("회원가입 완료.");
+        } else {
+            resultStatusService.setSuccess(signInResultDto);
+            signInResultDto.setDetailMessage("로그인 성공.");
+        }
+
+
+        String accessTokenNew = jwtProvider.createToken(member.getEmail(), List.of("ROLE_USER"));
+
+        String existingRefreshToken = member.getRefreshToken(); // 기존 Refresh Token 가져오기
+        String refreshToken;
+
+        if (existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
+            // 기존 Refresh Token이 유효하면 그대로 사용
+            refreshToken = existingRefreshToken;
+        } else {
+            // 기존 Refresh Token이 없거나 만료되었으면 새로 발급
+            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
+            member.setRefreshToken(refreshToken); // 새로운 Refresh Token을 DB에 저장 (필요할 경우)
+            authDao.saveMember(member); // 변경 사항 저장
+        }
+
+        signInResultDto.setToken(accessTokenNew);
+        signInResultDto.setRefreshToken(refreshToken); // 최종 Refresh Token 설정
+
+        resultStatusService.setSuccess(signInResultDto);
         signInResultDto.setDetailMessage("로그인 성공.");
         log.info("[SignIn] SignInResultDto: {}", signInResultDto);
 
@@ -192,38 +339,26 @@ public class AuthServiceImpl implements AuthService {
 
         if (member != null) {
             member.addKakaoAdditionalInfo(additionalInfoDto); // 기존 User 객체를 전달하여 새로운 User 객체 생성
-            authDao.KakaoMemberSave(member);
-            setSuccess(resultDto);
+            authDao.saveMember(member);
+            resultStatusService.setSuccess(resultDto);
         } else {
-            setFail(resultDto);
+            resultStatusService.setFail(resultDto);
         }
         return resultDto;
     }
 
-    private void setSuccess(ResultDto resultDto) {
-        resultDto.setSuccess(true);
-        resultDto.setCode(CommonResponse.SUCCESS.getCode());
-        resultDto.setMsg(CommonResponse.SUCCESS.getMsg());
-    }
 
-    private void setFail(ResultDto resultDto) {
-        resultDto.setSuccess(false);
-        resultDto.setCode(CommonResponse.Fail.getCode());
-        resultDto.setMsg(CommonResponse.Fail.getMsg());
-    }
     private SignInResultDto handleSignInFailure(SignInResultDto signInResultDto, String errorMessage) {
-        setFail(signInResultDto);
+        resultStatusService.setFail(signInResultDto);
         signInResultDto.setDetailMessage(errorMessage);
         throw new RuntimeException(errorMessage);
     }
+
     private void addServiceRoleManager(Member member){
         ServiceRole serviceRole = new ServiceRole();
         serviceRole.setMember(member);
         serviceRole.setRole("Role_User");
-        member.getServiceRoles().add(serviceRole);
         memberRoleDao.saveServiceRole(serviceRole);
-        member.setServiceRole("Role_User");
-        authDao.KakaoMemberSave(member);
     }
 
 }

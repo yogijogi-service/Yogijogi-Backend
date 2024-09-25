@@ -1,6 +1,7 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.MemberDao;
+import com.springboot.yogijogii.data.dto.authDto.GoogleResponseDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;
@@ -28,7 +29,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final MemberDao memberDao;
-    private final MemberRoleRepository memberRoleRepository;
 
     @Override
     public  Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
@@ -46,6 +46,21 @@ public class MemberServiceImpl implements MemberService {
                 .update_At(LocalDateTime.now())
                 .build();
     }
+
+    @Override
+    public Member createGoogleUser(GoogleResponseDto googleResponseDto) {
+        return Member.builder()
+                .name(googleResponseDto.getName())
+                .email(googleResponseDto.getEmail())
+                .profileUrl(googleResponseDto.getProfileUrl())
+                .loginMethod("Google")
+                .password("pass")
+                .passwordCheck("pass")
+                .create_At(LocalDateTime.now())
+                .update_At(LocalDateTime.now())
+                .build();
+    }
+
     @Override
     public  Member createUser(SignReqeustDto signReqeustDto) {
         // 비밀번호 일치 여부 확인

@@ -11,6 +11,7 @@ import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
+import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.JoinTeamService;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +27,14 @@ public class JoinTeamServiceImpl implements JoinTeamService {
     private final TeamDao teamDao;
     private final JoinTeamDao joinTeamDao;
     private final MemberRoleDao memberRoleDao;
+    private final JwtAuthenticationService jwtAuthenticationService;
 
     @Override
     public ResultDto joinTeam(HttpServletRequest servletRequest, JoinTeamDto requestDto, Long teamId) {
 
         ResultDto resultDto = new ResultDto();
         try {
-
-            String token = jwtProvider.resolveToken(servletRequest);
-            String email = jwtProvider.getUsername(token);
-            Member member = memberDao.findMemberByEmail(email);
+            Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
             Team team = teamDao.findByTeamId(teamId);
             if (team == null) {

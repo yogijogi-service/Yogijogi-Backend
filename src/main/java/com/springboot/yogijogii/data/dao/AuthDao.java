@@ -5,6 +5,6 @@ import com.springboot.yogijogii.data.entity.Member;
 
 public interface AuthDao {
 
-    Member KakaoMemberSave(Member member);
-    Member kakaoUserFind(String email);
+    Member saveMember(Member member);
+    Member findMember(String email);
 }

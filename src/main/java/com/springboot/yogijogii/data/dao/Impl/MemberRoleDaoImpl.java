@@ -30,9 +30,9 @@ public class MemberRoleDaoImpl implements MemberRoleDao {
     public boolean existsByMemberAndTeamAndRole(Member member, Team team, String role) {
         return memberRoleRepository.existsByMemberAndTeamAndRole(member, team, role);
     }
-
     @Override
     public boolean existsByMemberAndTeam(Member member, Team team) {
         return memberRoleRepository.existsByMemberAndTeam(member, team);
     }
+
 }

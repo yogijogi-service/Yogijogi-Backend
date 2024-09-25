@@ -1,6 +1,7 @@
 package com.springboot.yogijogii.service;
 
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
+import com.springboot.yogijogii.data.dto.authDto.GoogleResponseDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 public interface MemberService {
 
     Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse);
+    Member createGoogleUser(GoogleResponseDto googleResponseDto);
+
 
     Member createUser(SignReqeustDto signReqeustDto);
 
