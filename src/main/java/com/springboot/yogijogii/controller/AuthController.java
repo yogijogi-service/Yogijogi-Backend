@@ -30,6 +30,12 @@ public class AuthController {
     @Value("${kakao.redirect.url}")
     private String kakaoRedirectUrl;
 
+    @Value("${google.client.id}")
+    private String googleClientId;
+
+    @Value("${google.redirect.url}")
+    private String googleRedirectUrl;
+
 
     @GetMapping("/kakao/get-url")
     public Map<String,String> getKakaoUrl(){
@@ -41,9 +47,29 @@ public class AuthController {
         response.put("kakaoURL", url);
         return  response;
     }
-
+    @GetMapping("/google/get-url")
+    public Map<String,String> getGoogleUrl(){
+        Map<String, String> response = new HashMap<>();
+        String url =  String.format(
+                "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=%s&redirect_uri=%s&scope=email%%20profile",
+                googleClientId, googleRedirectUrl
+        );
+        response.put("googleURL", url);
+        return response;
+    }
     @GetMapping("/kakao/callback")
     public ResponseEntity<?> getKakaoAuthorizeCode(@RequestParam("code") String authorizeCode) {
+        log.info("[kakao-login] Received authorizeCode: {}", authorizeCode);
+
+        // 인가 코드를 클라이언트에 반환
+        Map<String, String> response = new HashMap<>();
+        response.put("authorizeCode", authorizeCode);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/google/callback")
+    public ResponseEntity<?> getGoogleAuthorizeCode(@RequestParam("code") String authorizeCode) {
         log.info("[kakao-login] Received authorizeCode: {}", authorizeCode);
 
         // 인가 코드를 클라이언트에 반환
@@ -58,6 +84,13 @@ public class AuthController {
         log.info("[kakao-login] accessToken {}", accessToken);
         return ResponseEntity.status(HttpStatus.OK).body(authService.getKakaoUserInfo(accessToken));
     }
+
+    @PostMapping("/google/signin")
+    public ResponseEntity<?> google_SignIn(@RequestParam String accessToken){
+        log.info("[google-login] accessToken {}", accessToken);
+        return ResponseEntity.status(HttpStatus.OK).body(authService.getGoogleUserInfo(accessToken));
+    }
+
 
     @PutMapping("/kakao/add-info")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
