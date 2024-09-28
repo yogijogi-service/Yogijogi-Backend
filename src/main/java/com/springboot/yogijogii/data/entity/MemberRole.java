@@ -32,4 +32,6 @@ public class MemberRole {
     private String role;
 
     private String position;
+
+    private String teamColor;
 }

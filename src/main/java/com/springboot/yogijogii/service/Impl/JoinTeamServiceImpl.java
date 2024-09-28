@@ -96,6 +96,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
                     .team(team)
                     .role("Role_Member")
                     .position(position)
+                    .teamColor("#000000")
                     .build());
             resultDto.setSuccess(true);
             resultDto.setMsg("초대코드로 팀가입에 성공하였습니다.");
