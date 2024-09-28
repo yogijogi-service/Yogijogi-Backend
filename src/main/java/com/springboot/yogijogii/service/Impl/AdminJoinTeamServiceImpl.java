@@ -61,6 +61,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             memberRole.setTeam(team);
             memberRole.setRole("Role_Member");
             memberRole.setPosition(joinRequest.getPosition());
+            memberRole.setTeamColor("#00000");
             memberRoleDao.saveMemberRole(memberRole);
 
             // 가입 요청 삭제
