@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.controller;
 
+import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
 import com.springboot.yogijogii.data.dto.myPageDto.UpdateMemberRoleRequestDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
@@ -31,9 +32,15 @@ public class MyPageController {
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "사용자 인증 Token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<ResultDto> updateMemberRole(@PathVariable Long teamId,
                                                       @RequestBody UpdateMemberRoleRequestDto requestDto,
-                                                      HttpServletRequest servletRequest){
+                                                      HttpServletRequest servletRequest) {
         ResultDto resultDto = myPageService.updateMemberRole(teamId, requestDto, servletRequest);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 
+    @GetMapping("/requests")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "사용자 인증 Token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<List<JoinTeamStatusDto>> getJoinRequests(HttpServletRequest servletRequest) {
+        List<JoinTeamStatusDto> joinRequests = myPageService.getJoinRequests(servletRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(joinRequests);
+    }
 }

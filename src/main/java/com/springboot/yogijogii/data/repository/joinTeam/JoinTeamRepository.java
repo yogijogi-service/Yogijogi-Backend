@@ -9,6 +9,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,8 @@ public interface JoinTeamRepository extends JpaRepository<JoinTeam, Long> {
     List<JoinTeam> findByTeamAndStatusAndPosition(Team team, String pending, String position);
 
     List<JoinTeam> findByTeamAndStatus(Team team, String pending);
+
+    List<JoinTeam> findAllByStatusAndUpdatedDateBefore(String status, LocalDateTime date);
+
+    List<JoinTeam> findByMember(Member member);
 }

@@ -1,9 +1,12 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.data.dao.JoinTeamDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
+import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
 import com.springboot.yogijogii.data.dto.myPageDto.UpdateMemberRoleRequestDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
@@ -27,6 +30,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final JwtAuthenticationService jwtAuthenticationService;
     private final MemberRoleRepository memberRoleRepository;
     private final TeamDao teamDao;
+    private final JoinTeamDao joinTeamDao;
 
     @Override
     public List<MyPageTeamResponseDto> getJoinedTeams(HttpServletRequest servletRequest) {
@@ -66,5 +70,22 @@ public class MyPageServiceImpl implements MyPageService {
         resultDto.setSuccess(true);
         resultDto.setMsg("팀 정보수정을 완료하였습니다.");
         return resultDto;
+    }
+
+    @Override
+    public List<JoinTeamStatusDto> getJoinRequests(HttpServletRequest servletRequest) {
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
+
+        List<JoinTeam> joinRequests = joinTeamDao.findByMember(member);
+        System.out.println("Join Requests: " + joinRequests); // 출력해서 값 확인
+
+        return joinRequests.stream().map(joinRequest ->
+                new JoinTeamStatusDto(
+                        joinRequest.getTeam().getTeamName(),
+                        joinRequest.getPosition(),
+                        joinRequest.getStatus(),
+                        joinRequest.getTeam().getTeamImageUrl()
+                )
+        ).collect(Collectors.toList());
     }
 }

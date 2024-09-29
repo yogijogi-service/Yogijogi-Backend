@@ -4,6 +4,7 @@ package com.springboot.yogijogii.data.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -40,4 +41,8 @@ public class JoinTeam {
     private String joinReason;
 
     private String status;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updatedDate;
 }

@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.service;
 
+import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
 import com.springboot.yogijogii.data.dto.myPageDto.UpdateMemberRoleRequestDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
@@ -11,4 +12,6 @@ public interface MyPageService {
     List<MyPageTeamResponseDto> getJoinedTeams(HttpServletRequest servletRequest);
 
     ResultDto updateMemberRole(Long teamId, UpdateMemberRoleRequestDto requestDto, HttpServletRequest servletRequest);
+
+    List<JoinTeamStatusDto> getJoinRequests(HttpServletRequest servletRequest);
 }

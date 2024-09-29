@@ -11,6 +11,7 @@ import com.springboot.yogijogii.data.repository.joinTeam.JoinTeamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +56,23 @@ public class JoinTeamDaoImpl implements JoinTeamDao {
     @Override
     public List<JoinTeam> findByTeamAndStatus(Team team, String pending) {
         List<JoinTeam> joinTeamList = joinTeamRepository.findByTeamAndStatus(team, pending);
+        return joinTeamList;
+    }
+
+    @Override
+    public List<JoinTeam> findByStatusAndDate(String status, LocalDateTime date) {
+        List<JoinTeam> joinTeamList = joinTeamRepository.findAllByStatusAndUpdatedDateBefore(status, date);
+        return joinTeamList;
+    }
+
+    @Override
+    public void deleteAll(List<JoinTeam> expiredRequests) {
+        joinTeamRepository.deleteAll(expiredRequests);
+    }
+
+    @Override
+    public List<JoinTeam> findByMember(Member member) {
+        List<JoinTeam> joinTeamList = joinTeamRepository.findByMember(member);
         return joinTeamList;
     }
 }
