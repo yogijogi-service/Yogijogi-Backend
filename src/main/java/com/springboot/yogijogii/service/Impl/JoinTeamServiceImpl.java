@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -67,7 +68,9 @@ public class JoinTeamServiceImpl implements JoinTeamService {
             joinTeam.setJoinReason(requestDto.getJoinReason());
             joinTeam.setPosition(requestDto.getPosition());
             joinTeam.setStatus("PENDING");
-
+            joinTeam.setCreatedDate(LocalDateTime.now());
+            joinTeam.setUpdatedDate(LocalDateTime.now());
+            
             joinTeamDao.save(joinTeam);
             resultDto.setSuccess(true);
             resultDto.setMsg("팀 가입요청을 성공하였습니다.");

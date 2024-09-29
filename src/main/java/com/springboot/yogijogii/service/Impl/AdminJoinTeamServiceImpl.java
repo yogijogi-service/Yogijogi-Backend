@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,8 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
                 .orElseThrow(() -> new IllegalArgumentException("팀 가입 요청 실패"));
 
         if (accept) {
+            // 가입 요청 삭제 대신 Status 변경
+            joinRequest.setStatus("ACCEPT");
             // 팀 가입 수락: Role_Member로 추가
             MemberRole memberRole = new MemberRole();
             memberRole.setMember(requestedMember);
@@ -64,16 +67,17 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             memberRole.setTeamColor("#00000");
             memberRoleDao.saveMemberRole(memberRole);
 
-            // 가입 요청 삭제
-            joinTeamDao.delete(joinRequest);
-
             resultDto.setMsg("팀가입 요청을 승인하였습니다.");
             resultDto.setSuccess(true);
         } else {
-            // 팀 가입 거절: 요청만 삭제
+            joinRequest.setStatus("REJECT");
+
             resultDto.setMsg("팀가입 요청을 거절하였습니다.");
             resultDto.setSuccess(false);
         }
+        joinRequest.setUpdatedDate(LocalDateTime.now());
+        // Status 저장
+        joinTeamDao.save(joinRequest);
         return resultDto;
     }
 
@@ -91,7 +95,6 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             if (!isManager) {
                 throw new IllegalAccessError("해당 팀을 관리할 권한이 없습니다.");
             }
-
             joinTeamResponseDto.setName(joinTeam.getName());
             joinTeamResponseDto.setGender(joinTeam.getGender());
             joinTeamResponseDto.setAddress(joinTeam.getAddress());

@@ -7,6 +7,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;
 import org.hibernate.mapping.Join;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,10 @@ public interface JoinTeamDao {
     List<JoinTeam> findByTeamAndStatusAndPosition(Team team, String pending, String position);
 
     List<JoinTeam> findByTeamAndStatus(Team team, String pending);
+
+    List<JoinTeam> findByStatusAndDate(String status, LocalDateTime date);
+
+    void deleteAll(List<JoinTeam> expiredRequests);
+
+    List<JoinTeam> findByMember(Member member);
 }
