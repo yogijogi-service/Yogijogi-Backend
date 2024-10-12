@@ -1,14 +1,11 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.springboot.yogijogii.Result.ResultStatusService;
 import com.springboot.yogijogii.data.dao.AuthDao;
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
-import com.springboot.yogijogii.data.dto.CommonResponse;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.GoogleResponseDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
@@ -28,7 +25,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
-    private final MemberRoleDao memberRoleDao;
+    private final TeamMemberDao teamMemberDao;
     private final ResultStatusService resultStatusService;
 
 
@@ -365,7 +361,7 @@ public class AuthServiceImpl implements AuthService {
         ServiceRole serviceRole = new ServiceRole();
         serviceRole.setMember(member);
         serviceRole.setRole("Role_User");
-        memberRoleDao.saveServiceRole(serviceRole);
+        teamMemberDao.saveServiceRole(serviceRole);
     }
 
 }

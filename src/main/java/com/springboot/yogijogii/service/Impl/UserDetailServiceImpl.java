@@ -27,7 +27,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         log.info("[loadUserByPhoneNum] : {} ", email);
 
         TypedQuery<Member> query = em.createQuery(
-                "SELECT m FROM Member m LEFT JOIN FETCH m.memberRoles WHERE m.email = :email",
+                "SELECT m FROM Member m LEFT JOIN FETCH m.teamMembers WHERE m.email = :email",
                 Member.class);
         query.setParameter("email", email);
 

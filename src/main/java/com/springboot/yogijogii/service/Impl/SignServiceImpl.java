@@ -1,6 +1,6 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
@@ -32,7 +32,7 @@ public class SignServiceImpl implements SignService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final MemberRoleDao memberRoleDao;
+    private final TeamMemberDao teamMemberDao;
 
     @Override
     public ResultDto SignUpSmsVerify(String certificationNumber, HttpServletRequest request) {
@@ -114,8 +114,8 @@ public class SignServiceImpl implements SignService {
         // 토큰 생성
         String accessToken = jwtProvider.createToken(
                 String.valueOf(member.getEmail()),
-                member.getMemberRoles().stream()
-                        .map(MemberRole::getRole)
+                member.getTeamMembers().stream()
+                        .map(TeamMember::getRole)
                         .collect(Collectors.toList())
         );
 
@@ -161,11 +161,11 @@ public class SignServiceImpl implements SignService {
         serviceRole.setMember(member);
         serviceRole.setRole("ROLE_USER"); // 권장되는 권한 이름으로 변경
         member.getServiceRoles().add(serviceRole);
-        memberRoleDao.saveServiceRole(serviceRole);
+        teamMemberDao.saveServiceRole(serviceRole);
         // member의 serviceRole 필드를 설정하여 ID가 저장되도록 함
         // member의 serviceRole 필드도 설정
         member.setServiceRole("ROLE_USER");
-        memberRoleDao.saveServiceRole(serviceRole);
+        teamMemberDao.saveServiceRole(serviceRole);
 
 
     }

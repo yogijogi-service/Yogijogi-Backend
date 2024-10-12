@@ -3,13 +3,11 @@ package com.springboot.yogijogii.service.Impl;
 import com.springboot.yogijogii.Result.ResultStatusService;
 import com.springboot.yogijogii.S3.S3Uploader;
 import com.springboot.yogijogii.data.dao.AnnouncementDao;
-import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementRequestDto;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.entity.Announcement;
 import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberRole;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.announcement.AnnouncementRepository;
 import com.springboot.yogijogii.data.repository.team.TeamRepository;
@@ -23,9 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -114,9 +110,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     private boolean isMemberManagerOfTeam(Member member, Team team) {
-        return member.getMemberRoles().stream()
-                .anyMatch(memberRole ->
-                        memberRole.getTeam().equals(team) &&
-                                memberRole.getRole().equals("ROLE_MANAGER"));
+        return member.getTeamMembers().stream()
+                .anyMatch(teamMember ->
+                        teamMember.getTeam().equals(team) &&
+                                teamMember.getRole().equals("ROLE_MANAGER"));
     }
 }

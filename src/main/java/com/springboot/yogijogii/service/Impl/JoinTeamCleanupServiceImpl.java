@@ -19,7 +19,7 @@ import java.util.List;
 public class JoinTeamCleanupServiceImpl implements JoinTeamCleanupService {
     private final JoinTeamDao joinTeamDao;
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void cleanUpJoinRequests() {
         try {
             // 현재 시간으로부터 7일 뒤에 삭제
