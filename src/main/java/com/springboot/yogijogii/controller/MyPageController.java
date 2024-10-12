@@ -2,7 +2,7 @@ package com.springboot.yogijogii.controller;
 
 import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
-import com.springboot.yogijogii.data.dto.myPageDto.UpdateMemberRoleRequestDto;
+import com.springboot.yogijogii.data.dto.myPageDto.UpdateTeamMemberRequestDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.service.MyPageService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -28,12 +28,12 @@ public class MyPageController {
         return ResponseEntity.status(HttpStatus.OK).body(myPageTeamResponseDtos);
     }
 
-    @PutMapping("/member-role/team/{teamId}")
+    @PutMapping("/teamMember/{teamId}")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "사용자 인증 Token", required = true, dataType = "String", paramType = "header")
-    public ResponseEntity<ResultDto> updateMemberRole(@PathVariable Long teamId,
-                                                      @RequestBody UpdateMemberRoleRequestDto requestDto,
+    public ResponseEntity<ResultDto> updateTeamMember(@PathVariable Long teamId,
+                                                      @RequestBody UpdateTeamMemberRequestDto requestDto,
                                                       HttpServletRequest servletRequest) {
-        ResultDto resultDto = myPageService.updateMemberRole(teamId, requestDto, servletRequest);
+        ResultDto resultDto = myPageService.updateTeamMember(teamId, requestDto, servletRequest);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 

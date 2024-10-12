@@ -2,14 +2,14 @@ package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.JoinTeamDao;
 import com.springboot.yogijogii.data.dao.MemberDao;
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.AdminJoinTeamService;
@@ -28,7 +28,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
     private final MemberDao memberDao;
     private final TeamDao teamDao;
     private final JoinTeamDao joinTeamDao;
-    private final MemberRoleDao memberRoleDao;
+    private final TeamMemberDao teamMemberDao;
 
     @Override
     public ResultDto processJoinRequest(HttpServletRequest servletRequest, Long teamId, Long memberId, boolean accept) throws Exception {
@@ -42,7 +42,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
         Team team = teamDao.findByTeamId(teamId);
 
         // 매니저 권한 확인 (loggedInMember가 해당 팀의 ROLE_MANAGER 인지 확인)
-        boolean isManager = memberRoleDao.existsByMemberAndTeamAndRole(loggedInMember, team, "Role_Manager");
+        boolean isManager = teamMemberDao.existsByMemberAndTeamAndRole(loggedInMember, team, "Role_Manager");
         if (!isManager) {
             throw new IllegalAccessError("해당 팀을 관리할 권한이 없습니다.");
         }
@@ -59,13 +59,14 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             // 가입 요청 삭제 대신 Status 변경
             joinRequest.setStatus("ACCEPT");
             // 팀 가입 수락: Role_Member로 추가
-            MemberRole memberRole = new MemberRole();
-            memberRole.setMember(requestedMember);
-            memberRole.setTeam(team);
-            memberRole.setRole("Role_Member");
-            memberRole.setPosition(joinRequest.getPosition());
-            memberRole.setTeamColor("#00000");
-            memberRoleDao.saveMemberRole(memberRole);
+            TeamMember teamMember = new TeamMember();
+            teamMember.setMember(requestedMember);
+            teamMember.setTeam(team);
+            teamMember.setRole("ROLE_MEMBER");
+            teamMember.setPosition(joinRequest.getPosition());
+            teamMember.setTeamColor("#00000");
+            teamMember.setCreatedDate(LocalDateTime.now());
+            teamMemberDao.saveTeamMember(teamMember);
 
             resultDto.setMsg("팀가입 요청을 승인하였습니다.");
             resultDto.setSuccess(true);
@@ -91,7 +92,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
 
             JoinTeam joinTeam = joinTeamDao.findByJoinTeamId(joinTeamId);
 
-            boolean isManager = memberRoleDao.existsByMemberAndTeamAndRole(member, joinTeam.getTeam(), "Role_Manager");
+            boolean isManager = teamMemberDao.existsByMemberAndTeamAndRole(member, joinTeam.getTeam(), "Role_Manager");
             if (!isManager) {
                 throw new IllegalAccessError("해당 팀을 관리할 권한이 없습니다.");
             }

@@ -2,13 +2,13 @@ package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.JoinTeamDao;
 import com.springboot.yogijogii.data.dao.MemberDao;
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
@@ -26,7 +26,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
     private final MemberDao memberDao;
     private final TeamDao teamDao;
     private final JoinTeamDao joinTeamDao;
-    private final MemberRoleDao memberRoleDao;
+    private final TeamMemberDao teamMemberDao;
     private final JwtAuthenticationService jwtAuthenticationService;
 
     @Override
@@ -43,7 +43,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
                 return resultDto;
             }
 
-            boolean isAlreadyMember = memberRoleDao.existsByMemberAndTeam(member, team);
+            boolean isAlreadyMember = teamMemberDao.existsByMemberAndTeam(member, team);
             if (isAlreadyMember) {
                 resultDto.setSuccess(false);
                 resultDto.setMsg("이미 이 팀의 멤버로 소속되어 있습니다.");
@@ -94,12 +94,13 @@ public class JoinTeamServiceImpl implements JoinTeamService {
             if (team == null) {
                 throw new IllegalArgumentException("유효하지 않은 초대 코드입니다.");
             }
-            memberRoleDao.saveMemberRole(MemberRole.builder()
+            teamMemberDao.saveTeamMember(TeamMember.builder()
                     .member(member)
                     .team(team)
-                    .role("Role_Member")
+                    .role("ROLE_MEMBER")
                     .position(position)
                     .teamColor("#000000")
+                    .createdDate(LocalDateTime.now())
                     .build());
             resultDto.setSuccess(true);
             resultDto.setMsg("초대코드로 팀가입에 성공하였습니다.");

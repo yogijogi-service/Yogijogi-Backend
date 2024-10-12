@@ -9,7 +9,6 @@ import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -73,8 +72,8 @@ public class Member implements UserDetails {
     @Override
     @Transactional
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.memberRoles.stream()
-                .map(memberRole -> new SimpleGrantedAuthority(memberRole.getRole()))
+        return this.teamMembers.stream()
+                .map(teamMember -> new SimpleGrantedAuthority(teamMember.getRole()))
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +115,7 @@ public class Member implements UserDetails {
     private Team team;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<MemberRole> memberRoles;
+    private List<TeamMember> teamMembers;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<ServiceRole> serviceRoles = new ArrayList<>();
@@ -128,9 +127,9 @@ public class Member implements UserDetails {
     @JoinColumn(name = "memberAgreement_id", referencedColumnName = "id")
     private MemberAgreement memberAgreement;
 
-    public List<MemberRole> getMemberRolesWithInit() {
-        Hibernate.initialize(memberRoles);
-        return memberRoles;
+    public List<TeamMember> getMemberRolesWithInit() {
+        Hibernate.initialize(teamMembers);
+        return teamMembers;
     }
 
     public void addKakaoAdditionalInfo(AdditionalInfoDto additionalInfoDto) {

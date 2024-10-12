@@ -4,19 +4,17 @@ import com.springboot.yogijogii.data.dao.JoinTeamDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
-import com.springboot.yogijogii.data.dto.myPageDto.UpdateMemberRoleRequestDto;
+import com.springboot.yogijogii.data.dto.myPageDto.UpdateTeamMemberRequestDto;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
-import com.springboot.yogijogii.data.repository.memberRole.MemberRoleRepository;
+import com.springboot.yogijogii.data.repository.teamMember.TeamMemberRepository;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MyPageServiceImpl implements MyPageService {
     private final JwtAuthenticationService jwtAuthenticationService;
-    private final MemberRoleRepository memberRoleRepository;
+    private final TeamMemberRepository teamMemberRepository;
     private final TeamDao teamDao;
     private final JoinTeamDao joinTeamDao;
 
@@ -36,37 +34,37 @@ public class MyPageServiceImpl implements MyPageService {
     public List<MyPageTeamResponseDto> getJoinedTeams(HttpServletRequest servletRequest) {
         Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
-        List<MemberRole> memberRoles = memberRoleRepository.findByMember(member);
-        log.info("memberRoles",memberRoles.toString());
+        List<TeamMember> teamMembers = teamMemberRepository.findByMember(member);
+        log.info("teamMembers", teamMembers.toString());
 
-        if(memberRoles.isEmpty()){
+        if(teamMembers.isEmpty()){
             throw new RuntimeException("소속된 팀이 없습니다.");
         }
 
-        return memberRoles.stream()
-                .filter(memberRole -> memberRole.getTeam()!=null)
-                .map(memberRole -> new MyPageTeamResponseDto(
-                        memberRole.getTeam().getTeamId(),
-                        memberRole.getPosition(),
-                        memberRole.getTeamColor(),
-                        memberRole.getTeam().getTeamImageUrl(),
-                        memberRole.getTeam().getTeamName()
+        return teamMembers.stream()
+                .filter(teamMember -> teamMember.getTeam()!=null)
+                .map(teamMember -> new MyPageTeamResponseDto(
+                        teamMember.getTeam().getTeamId(),
+                        teamMember.getPosition(),
+                        teamMember.getTeamColor(),
+                        teamMember.getTeam().getTeamImageUrl(),
+                        teamMember.getTeam().getTeamName()
                 ))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ResultDto updateMemberRole(Long teamId, UpdateMemberRoleRequestDto requestDto, HttpServletRequest servletRequest) {
+    public ResultDto updateTeamMember(Long teamId, UpdateTeamMemberRequestDto requestDto, HttpServletRequest servletRequest) {
         ResultDto resultDto = new ResultDto();
         Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
         Team team = teamDao.findByTeamId(teamId);
-        MemberRole memberRole = memberRoleRepository.findByMemberAndTeam(member, team);
+        TeamMember teamMember = teamMemberRepository.findByMemberAndTeam(member, team);
 
-        memberRole.setPosition(requestDto.getPosition());
-        memberRole.setTeamColor(requestDto.getTeamColor());
+        teamMember.setPosition(requestDto.getPosition());
+        teamMember.setTeamColor(requestDto.getTeamColor());
 
-        memberRoleRepository.save(memberRole);
+        teamMemberRepository.save(teamMember);
         resultDto.setSuccess(true);
         resultDto.setMsg("팀 정보수정을 완료하였습니다.");
         return resultDto;

@@ -2,14 +2,15 @@ package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.S3.S3Uploader;
 import com.springboot.yogijogii.data.dao.MemberDao;
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
+import com.springboot.yogijogii.data.dto.teamDto.TeamMemberListDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
 import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
@@ -22,7 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +38,7 @@ public class TeamServiceImpl implements TeamService {
     private final JwtProvider jwtProvider;
     private final TeamDao teamDao;
     private final MemberDao memberDao;
-    private final MemberRoleDao memberRoleDao;
+    private final TeamMemberDao teamMemberDao;
 
     @Override
     public ResultDto createTeam(CreateTeamRquestDto createTeamRquestDto, MultipartFile image,HttpServletRequest request) throws IOException{
@@ -94,6 +98,35 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    public List<TeamMemberListDto> getTeamMemberList(HttpServletRequest servletRequest, Long teamId, String position, String sort) {
+        List<TeamMember> teamMembers;
+
+        Team team = teamDao.findByTeamId(teamId);
+
+        if ("전체".equals(position)) {
+            teamMembers = teamMemberDao.findByTeam(team);
+        } else {
+            teamMembers = teamMemberDao.findByTeamAndPosition(team, position);
+        }
+        // sort 값에 따른 정렬
+        if ("최신 가입순".equals(sort)) {
+            teamMembers.sort(Comparator.comparing(TeamMember::getCreatedDate).reversed());
+        } else if ("오래된 가입순".equals(sort)) {
+            teamMembers.sort(Comparator.comparing(TeamMember::getCreatedDate));
+        }
+
+        return teamMembers.stream()
+                .map(teamMember -> TeamMemberListDto.builder()
+                        .id(teamMember.getId())
+                        .profileUrl(teamMember.getMember().getProfileUrl())
+                        .name(teamMember.getMember().getName())
+                        .position(teamMember.getPosition())
+                        .role(teamMember.getRole())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Team saveTeamInfo(CreateTeamRquestDto createTeamRquestDto ,MultipartFile image) throws IOException {
         String imageUrl = saveImageS3(image);
 
@@ -136,12 +169,12 @@ public class TeamServiceImpl implements TeamService {
     }
 
     private void addMemberRoleManager(Member member, Team team){
-        MemberRole memberRole = new MemberRole();
-        memberRole.setMember(member);
-        memberRole.setTeam(team);
-        memberRole.setRole("ROLE_MANAGER");
-        member.getMemberRoles().add(memberRole);
-        memberRoleDao.saveMemberRole(memberRole);
+        TeamMember teamMember = new TeamMember();
+        teamMember.setMember(member);
+        teamMember.setTeam(team);
+        teamMember.setRole("ROLE_MANAGER");
+        member.getTeamMembers().add(teamMember);
+        teamMemberDao.saveTeamMember(teamMember);
     }
     private void setSuccess(ResultDto resultDto){
         resultDto.setSuccess(true);
