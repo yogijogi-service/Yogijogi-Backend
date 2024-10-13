@@ -1,6 +1,6 @@
 package com.springboot.yogijogii.service;
 
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamMemberListDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
@@ -19,5 +19,6 @@ public interface TeamService {
     TeamResponseDto getTeam(HttpServletRequest servletRequest, Long teamId);
 
     List<TeamMemberListDto> getTeamMemberList(HttpServletRequest servletRequest, Long teamId, String position, String sort);
+
 }
 

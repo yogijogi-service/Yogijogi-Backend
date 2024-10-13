@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.data.dto.signDto;
 
+import com.springboot.yogijogii.data.dto.ResultDto;
 import lombok.*;
 
 @Data

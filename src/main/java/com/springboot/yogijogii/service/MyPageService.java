@@ -3,7 +3,7 @@ package com.springboot.yogijogii.service;
 import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
 import com.springboot.yogijogii.data.dto.myPageDto.UpdateTeamMemberRequestDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

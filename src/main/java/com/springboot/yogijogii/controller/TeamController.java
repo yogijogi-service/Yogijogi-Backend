@@ -1,7 +1,6 @@
 package com.springboot.yogijogii.controller;
 
-import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamMemberListDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;

@@ -1,8 +1,7 @@
 package com.springboot.yogijogii.controller;
 
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamDto;
-import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.service.JoinTeamService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;

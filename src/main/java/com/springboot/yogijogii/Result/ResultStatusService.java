@@ -2,7 +2,7 @@ package com.springboot.yogijogii.Result;
 
 
 import com.springboot.yogijogii.data.dto.CommonResponse;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,5 @@
 package com.springboot.yogijogii.controller;
 
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
 import com.springboot.yogijogii.data.dto.teamDto.search.SearchTeamFilterRequestDto;
 import com.springboot.yogijogii.data.dto.teamDto.search.SearchTeamFilterResponseDto;

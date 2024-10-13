@@ -2,8 +2,7 @@ package com.springboot.yogijogii.controller;
 
 
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
-import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.service.AuthService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;

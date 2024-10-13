@@ -5,7 +5,7 @@ import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.TeamMember;
