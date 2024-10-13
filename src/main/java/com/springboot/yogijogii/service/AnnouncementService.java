@@ -2,8 +2,7 @@ package com.springboot.yogijogii.service;
 
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementRequestDto;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
-import com.springboot.yogijogii.data.entity.Announcement;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;

@@ -2,7 +2,7 @@ package com.springboot.yogijogii.controller;
 
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementRequestDto;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.service.AnnouncementService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;

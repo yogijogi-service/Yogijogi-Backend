@@ -4,6 +4,7 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.ServiceRole;
 import com.springboot.yogijogii.data.entity.Team;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -15,7 +16,11 @@ public interface TeamMemberDao {
 
     boolean existsByMemberAndTeam(Member member, Team team);
 
-    List<TeamMember> findByTeam(Team team);
+    List<TeamMember> findByTeam(Team team, Sort sortOrder);
 
-    List<TeamMember> findByTeamAndPosition(Team team, String position);
+    List<TeamMember> findByTeamAndPosition(Team team, String position, Sort sortOrder);
+
+    TeamMember findById(Long teamMemberId);
+
+    void save(TeamMember teamMember);
 }

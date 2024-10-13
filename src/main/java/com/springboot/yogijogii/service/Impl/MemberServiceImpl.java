@@ -6,7 +6,7 @@ import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;

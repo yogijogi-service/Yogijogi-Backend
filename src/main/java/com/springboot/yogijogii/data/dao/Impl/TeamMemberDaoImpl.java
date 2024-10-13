@@ -8,9 +8,12 @@ import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.ServiceRoleRepository;
 import com.springboot.yogijogii.data.repository.teamMember.TeamMemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.springboot.yogijogii.data.entity.QTeam.team;
 
 @RequiredArgsConstructor
 @Service
@@ -38,13 +41,23 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     }
 
     @Override
-    public List<TeamMember> findByTeam(Team team) {
-        return teamMemberRepository.findByTeam(team);
+    public List<TeamMember> findByTeam(Team team, Sort sortOrder) {
+        return teamMemberRepository.findByTeam(team, sortOrder);
     }
 
     @Override
-    public List<TeamMember> findByTeamAndPosition(Team team, String position) {
-        return teamMemberRepository.findByTeamAndPosition(team, position);
+    public List<TeamMember> findByTeamAndPosition(Team team, String position, Sort sortOrder) {
+        return teamMemberRepository.findByTeamAndPosition(team, position, sortOrder);
+    }
+
+    @Override
+    public TeamMember findById(Long teamMemberId) {
+        return teamMemberRepository.findTeamMemberById(teamMemberId);
+    }
+
+    @Override
+    public void save(TeamMember teamMember) {
+        teamMemberRepository.save(teamMember);
     }
 
 }

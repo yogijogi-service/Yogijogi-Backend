@@ -5,7 +5,7 @@ import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamMemberListDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
@@ -17,13 +17,13 @@ import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -99,20 +99,17 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamMemberListDto> getTeamMemberList(HttpServletRequest servletRequest, Long teamId, String position, String sort) {
-        List<TeamMember> teamMembers;
-
         Team team = teamDao.findByTeamId(teamId);
 
+        // 정렬 기준 설정 (기본값: createdDate 오름차순)
+        Sort sortOrder = "최신 가입순".equals(sort) ? Sort.by(Sort.Direction.DESC, "createdDate") : Sort.by(Sort.Direction.ASC, "createdDate");
+
+        // position에 따른 멤버 조회
+        List<TeamMember> teamMembers;
         if ("전체".equals(position)) {
-            teamMembers = teamMemberDao.findByTeam(team);
+            teamMembers = teamMemberDao.findByTeam(team, sortOrder);
         } else {
-            teamMembers = teamMemberDao.findByTeamAndPosition(team, position);
-        }
-        // sort 값에 따른 정렬
-        if ("최신 가입순".equals(sort)) {
-            teamMembers.sort(Comparator.comparing(TeamMember::getCreatedDate).reversed());
-        } else if ("오래된 가입순".equals(sort)) {
-            teamMembers.sort(Comparator.comparing(TeamMember::getCreatedDate));
+            teamMembers = teamMemberDao.findByTeamAndPosition(team, position, sortOrder);
         }
 
         return teamMembers.stream()

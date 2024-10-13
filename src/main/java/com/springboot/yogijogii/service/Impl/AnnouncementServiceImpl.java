@@ -5,7 +5,7 @@ import com.springboot.yogijogii.S3.S3Uploader;
 import com.springboot.yogijogii.data.dao.AnnouncementDao;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementRequestDto;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.entity.Announcement;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;

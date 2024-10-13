@@ -2,7 +2,7 @@ package com.springboot.yogijogii.service;
 
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

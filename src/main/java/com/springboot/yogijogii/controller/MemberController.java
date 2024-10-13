@@ -2,7 +2,7 @@ package com.springboot.yogijogii.controller;
 
 import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.service.MemberService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;

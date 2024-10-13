@@ -9,7 +9,7 @@ import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
 import com.springboot.yogijogii.data.dto.authDto.GoogleResponseDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.ServiceRole;

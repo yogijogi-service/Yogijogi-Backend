@@ -4,7 +4,7 @@ import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.*;

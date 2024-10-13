@@ -1,7 +1,7 @@
 package com.springboot.yogijogii.service;
 
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import org.springframework.http.ResponseEntity;
 
