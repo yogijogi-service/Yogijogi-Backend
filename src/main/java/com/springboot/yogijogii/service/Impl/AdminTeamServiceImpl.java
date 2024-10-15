@@ -34,6 +34,11 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         if(!isManager){
             throw new RuntimeException("해당팀에 매니저가 아닙니다.");
         }
+        if (teamMember.getRole().equals("ROLE_MANAGER")) {
+            throw new IllegalArgumentException("매니저 권한을 삭제할 수 없습니다.");
+        }
+
+
         // 부매니저 권한 부여 또는 해지
         if (grant) {
             teamMember.setRole("ROLE_SUBMANAGER");  // 부매니저 역할 설정
