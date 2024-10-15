@@ -14,7 +14,7 @@ public class MyPageTeamResponseDto {
 
     private String teamColor;
 
-    private String teamImg;
+    private String teamImageUrl;
 
     private String teamName;
 }
