@@ -16,6 +16,8 @@ public interface TeamMemberDao {
 
     boolean existsByMemberAndTeam(Member member, Team team);
 
+    List<TeamMember> findByMember(Member member);
+
     List<TeamMember> findByTeam(Team team, Sort sortOrder);
 
     List<TeamMember> findByTeamAndPosition(Team team, String position, Sort sortOrder);
@@ -23,4 +25,8 @@ public interface TeamMemberDao {
     TeamMember findById(Long teamMemberId);
 
     void save(TeamMember teamMember);
+
+    TeamMember findByMemberAndTeam(Member member, Team team);
+
+    void delete(TeamMember teamMember);
 }

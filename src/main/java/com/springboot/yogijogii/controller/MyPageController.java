@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.controller;
 
+import com.amazonaws.Response;
 import com.springboot.yogijogii.data.dto.myPageDto.JoinTeamStatusDto;
 import com.springboot.yogijogii.data.dto.myPageDto.MyPageTeamResponseDto;
 import com.springboot.yogijogii.data.dto.myPageDto.UpdateTeamMemberRequestDto;
@@ -42,5 +43,14 @@ public class MyPageController {
     public ResponseEntity<List<JoinTeamStatusDto>> getJoinRequests(HttpServletRequest servletRequest) {
         List<JoinTeamStatusDto> joinRequests = myPageService.getJoinRequests(servletRequest);
         return ResponseEntity.status(HttpStatus.OK).body(joinRequests);
+    }
+
+    @DeleteMapping("/leave/{teamId}")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "사용자 인증 Token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<ResultDto> leaveTeam(HttpServletRequest servletRequest,
+                                               @PathVariable Long teamId,
+                                               @RequestBody String reason) {
+        ResultDto resultDto = myPageService.leaveTeam(servletRequest, teamId, reason);
+        return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 }

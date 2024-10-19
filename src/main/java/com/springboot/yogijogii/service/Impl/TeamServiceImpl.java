@@ -83,6 +83,7 @@ public class TeamServiceImpl implements TeamService {
         TeamResponseDto teamResponseDto = new TeamResponseDto();
         teamResponseDto.setTeamName(team.getTeamName());
         teamResponseDto.setTeamImageUrl(team.getTeamImageUrl());
+        teamResponseDto.setInviteCode(team.getInviteCode());
         teamResponseDto.setTeam_introduce(team.getTeam_introduce());
         teamResponseDto.setRegion(team.getRegion());
         teamResponseDto.setTown(team.getTown());

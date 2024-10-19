@@ -14,4 +14,6 @@ public interface MyPageService {
     ResultDto updateTeamMember(Long teamId, UpdateTeamMemberRequestDto requestDto, HttpServletRequest servletRequest);
 
     List<JoinTeamStatusDto> getJoinRequests(HttpServletRequest servletRequest);
+
+    ResultDto leaveTeam(HttpServletRequest servletRequest, Long teamId, String reason);
 }
