@@ -41,6 +41,11 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     }
 
     @Override
+    public List<TeamMember> findByMember(Member member) {
+        return teamMemberRepository.findByMember(member);
+    }
+
+    @Override
     public List<TeamMember> findByTeam(Team team, Sort sortOrder) {
         return teamMemberRepository.findByTeam(team, sortOrder);
     }
@@ -53,6 +58,16 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     @Override
     public TeamMember findById(Long teamMemberId) {
         return teamMemberRepository.findTeamMemberById(teamMemberId);
+    }
+
+    @Override
+    public TeamMember findByMemberAndTeam(Member member, Team team){
+        return teamMemberRepository.findTeamMemberByMemberAndTeam(member, team);
+    }
+
+    @Override
+    public void delete(TeamMember teamMember) {
+        teamMemberRepository.delete(teamMember);
     }
 
     @Override

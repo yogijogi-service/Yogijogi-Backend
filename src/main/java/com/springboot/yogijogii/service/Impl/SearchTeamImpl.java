@@ -74,6 +74,7 @@ public class SearchTeamImpl implements SearchTeam {
                 team.getTeamName(),
                 team.getTeam_introduce(),
                 team.getTeamImageUrl(),
+                team.getInviteCode(),
                 team.getRegion(),
                 team.getTown(),
                 team.getMatchLocation(),

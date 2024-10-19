@@ -16,11 +16,11 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
 
     List<TeamMember> findByMember(Member member);
 
-    TeamMember findByMemberAndTeam(Member member, Team team);
-
     List<TeamMember> findByTeam(Team team, Sort sortOrder);
 
     List<TeamMember> findByTeamAndPosition(Team team, String position, Sort sortOrder);
 
     TeamMember findTeamMemberById(Long teamMemberId);
+
+    TeamMember findTeamMemberByMemberAndTeam(Member member, Team team);
 }

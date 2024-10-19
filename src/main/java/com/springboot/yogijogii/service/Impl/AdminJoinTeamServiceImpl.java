@@ -55,6 +55,10 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
         JoinTeam joinRequest = (JoinTeam) joinTeamDao.findByTeamAndMember(team, requestedMember)
                 .orElseThrow(() -> new IllegalArgumentException("팀 가입 요청 실패"));
 
+        if(teamMemberDao.existsByMemberAndTeam(requestedMember,team)){
+            throw new IllegalArgumentException("팀에 이미 가입된 사용자 입니다.");
+        }
+
         if (accept) {
             // 가입 요청 삭제 대신 Status 변경
             joinRequest.setStatus("ACCEPT");
