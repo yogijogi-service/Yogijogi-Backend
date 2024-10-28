@@ -13,12 +13,12 @@ public class AuthDaoImpl implements AuthDao {
     private final MemberRepository memberRepository;
 
     @Override
-    public Member KakaoMemberSave(Member member) {
+    public Member saveMember(Member member) {
         return memberRepository.save(member);
     }
 
     @Override
-    public Member kakaoUserFind(String email) {
+    public Member findMember(String email) {
         return memberRepository.findByEmail(email);
     }
 

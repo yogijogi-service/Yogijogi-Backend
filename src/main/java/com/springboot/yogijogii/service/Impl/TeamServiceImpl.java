@@ -1,26 +1,32 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.S3.S3Uploader;
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.dao.MemberDao;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
+import com.springboot.yogijogii.data.dto.teamDto.TeamMemberListDto;
+import com.springboot.yogijogii.data.dto.teamDto.TeamResponseDto;
 import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +37,8 @@ public class TeamServiceImpl implements TeamService {
     private final S3Uploader s3Uploader;
     private final JwtProvider jwtProvider;
     private final TeamDao teamDao;
-    private final MemberRoleDao memberRoleDao;
+    private final MemberDao memberDao;
+    private final TeamMemberDao teamMemberDao;
 
     @Override
     public ResultDto createTeam(CreateTeamRquestDto createTeamRquestDto, MultipartFile image,HttpServletRequest request) throws IOException{
@@ -57,6 +64,9 @@ public class TeamServiceImpl implements TeamService {
             team.setMember(member);
             teamDao.save(team);
             addMemberRoleManager(member,team);
+            member.setTeam(team);
+            memberDao.save(member);
+
             resultDto.setDetailMessage("팀 생성 완료.");
             setSuccess(resultDto);
         }else{
@@ -65,6 +75,53 @@ public class TeamServiceImpl implements TeamService {
         }
 
         return resultDto;
+    }
+
+    @Override
+    public TeamResponseDto getTeam(HttpServletRequest servletRequest, Long teamId) {
+        Team team = teamDao.findByTeamId(teamId);
+        TeamResponseDto teamResponseDto = new TeamResponseDto();
+        teamResponseDto.setTeamName(team.getTeamName());
+        teamResponseDto.setTeamImageUrl(team.getTeamImageUrl());
+        teamResponseDto.setInviteCode(team.getInviteCode());
+        teamResponseDto.setTeam_introduce(team.getTeam_introduce());
+        teamResponseDto.setRegion(team.getRegion());
+        teamResponseDto.setTown(team.getTown());
+        teamResponseDto.setMatchLocation(team.getMatchLocation());
+        teamResponseDto.setDues(team.getDues());
+        teamResponseDto.setTeamGender(teamResponseDto.getTeamGender());
+        teamResponseDto.setAgeRange(team.getAgeRange());
+        teamResponseDto.setTeamLevel(team.getTeamLevel());
+        teamResponseDto.setActivityDays(team.getActivityDays());
+        teamResponseDto.setActivityTime(team.getActivityTime());
+        teamResponseDto.setPositionRequired(team.getPositionRequired());
+        return teamResponseDto;
+    }
+
+    @Override
+    public List<TeamMemberListDto> getTeamMemberList(HttpServletRequest servletRequest, Long teamId, String position, String sort) {
+        Team team = teamDao.findByTeamId(teamId);
+
+        // 정렬 기준 설정 (기본값: createdDate 오름차순)
+        Sort sortOrder = "최신 가입순".equals(sort) ? Sort.by(Sort.Direction.DESC, "createdDate") : Sort.by(Sort.Direction.ASC, "createdDate");
+
+        // position에 따른 멤버 조회
+        List<TeamMember> teamMembers;
+        if ("전체".equals(position)) {
+            teamMembers = teamMemberDao.findByTeam(team, sortOrder);
+        } else {
+            teamMembers = teamMemberDao.findByTeamAndPosition(team, position, sortOrder);
+        }
+
+        return teamMembers.stream()
+                .map(teamMember -> TeamMemberListDto.builder()
+                        .id(teamMember.getId())
+                        .profileUrl(teamMember.getMember().getProfileUrl())
+                        .name(teamMember.getMember().getName())
+                        .position(teamMember.getPosition())
+                        .role(teamMember.getRole())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -110,12 +167,12 @@ public class TeamServiceImpl implements TeamService {
     }
 
     private void addMemberRoleManager(Member member, Team team){
-        MemberRole memberRole = new MemberRole();
-        memberRole.setMember(member);
-        memberRole.setTeam(team);
-        memberRole.setRole("Role_Manager");
-        member.getMemberRoles().add(memberRole);
-        memberRoleDao.saveMemberRole(memberRole);
+        TeamMember teamMember = new TeamMember();
+        teamMember.setMember(member);
+        teamMember.setTeam(team);
+        teamMember.setRole("ROLE_MANAGER");
+        member.getTeamMembers().add(teamMember);
+        teamMemberDao.saveTeamMember(teamMember);
     }
     private void setSuccess(ResultDto resultDto){
         resultDto.setSuccess(true);

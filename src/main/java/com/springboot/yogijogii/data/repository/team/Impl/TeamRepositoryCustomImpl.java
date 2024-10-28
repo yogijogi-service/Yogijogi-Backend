@@ -1,12 +1,15 @@
 package com.springboot.yogijogii.data.repository.team.Impl;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import com.springboot.yogijogii.data.dto.teamDto.search.SearchTeamFilterRequestDto;
 import com.springboot.yogijogii.data.entity.QTeam;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.repository.team.TeamRepositoryCustom;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,45 +19,62 @@ import java.util.List;
 public class TeamRepositoryCustomImpl implements TeamRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
+    QTeam team = QTeam.team;
 
     @Override
-    public List<Team> searchTeam(String team_name) {
-        QTeam qTeam = QTeam.team;
-        return jpaQueryFactory.selectFrom(qTeam)
-                .where(qTeam.teamName.like("%"+team_name+"%"))
+    public List<Team> searchTeams(SearchTeamFilterRequestDto searchTeamFilterRequestDto) {
+        return jpaQueryFactory
+                .selectFrom(team)
+                .where(
+                        eqRegion(searchTeamFilterRequestDto.getTeamRegion()),
+                        eqLevel(searchTeamFilterRequestDto.getTeamLevel()),
+                        eqGender(searchTeamFilterRequestDto.getTeamGender()),
+                        eqAgeRange(searchTeamFilterRequestDto.getAgeRange()),
+                        eqActivityTime(searchTeamFilterRequestDto.getActivityTime()),
+                        eqActivityDays(searchTeamFilterRequestDto.getActivityDays())
+                )
                 .fetch();
     }
 
-    @Override
-    public List<Team> searchRegion(String region) {
-        QTeam qTeam = QTeam.team;
-        return jpaQueryFactory.selectFrom(qTeam)
-                .where(qTeam.region.like("%"+region+"%"))
-                .fetch();
+    private BooleanExpression eqRegion(List<String> regions) {
+        if (CollectionUtils.isEmpty(regions)) {
+            return null;
+        }
+        return team.region.in(regions);
     }
 
-    @Override
-    public List<Team> searchGender(String teamGender) {
-        QTeam qTeam = QTeam.team;
-        return jpaQueryFactory.selectFrom(qTeam)
-                .where(qTeam.teamGender.like("%"+teamGender+"%"))
-                .fetch();
-    }
-    @Override
-    public List<Team> searchDay(String activityDays) {
-        QTeam qTeam = QTeam.team;
-        return jpaQueryFactory.selectFrom(qTeam)
-                .where(qTeam.activityDays.contains(activityDays))
-                .fetch();
-    }
-    @Override
-    public List<Team> searchTime(String activityTime) {
-        QTeam qTeam = QTeam.team;
-        return jpaQueryFactory.selectFrom(qTeam)
-                .where(qTeam.activityTime.contains(activityTime))
-                .fetch();
+    private BooleanExpression eqGender(List<String> genders) {
+        if (CollectionUtils.isEmpty(genders)) {
+            return null;
+        }
+        return team.teamGender.in(genders);
     }
 
+    private BooleanExpression eqLevel(List<String> levels) {
+        if (CollectionUtils.isEmpty(levels)) {
+            return null;
+        }
+        return team.teamLevel.in(levels);
+    }
 
+    private BooleanExpression eqAgeRange(List<String> ageRanges) {
+        if (CollectionUtils.isEmpty(ageRanges)) {
+            return null;
+        }
+        return team.teamLevel.in(ageRanges);
+    }
 
+    private BooleanExpression eqActivityTime(List<String> activityTimes) {
+        if (CollectionUtils.isEmpty(activityTimes)) {
+            return null;
+        }
+        return team.activityTime.any().in(activityTimes);
+    }
+
+    private BooleanExpression eqActivityDays(List<String> activityDays) {
+        if (CollectionUtils.isEmpty(activityDays)) {
+            return null;
+        }
+        return team.activityDays.any().in(activityDays); // 다중 값 지원
+    }
 }

@@ -16,4 +16,16 @@ public class TeamDaoImpl implements TeamDao {
     public void save(Team team) {
         teamRepository.save(team);
     }
+
+    @Override
+    public Team findByTeamId(Long teamId) {
+        Team team = teamRepository.findByTeamId(teamId);
+        return team;
+    }
+
+    @Override
+    public Team findByInviteCode(String inviteCode) {
+        Team team = teamRepository.findByInviteCode(inviteCode);
+        return team;
+    }
 }

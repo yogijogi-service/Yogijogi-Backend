@@ -1,16 +1,16 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.MemberDao;
-import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
+import com.springboot.yogijogii.data.dto.authDto.GoogleResponseDto;
 import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberRequestDto;
 import com.springboot.yogijogii.data.dto.memberDto.MemberResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;
-import com.springboot.yogijogii.data.entity.MemberRole;
+import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
@@ -29,7 +29,6 @@ public class MemberServiceImpl implements MemberService {
     private final JwtProvider jwtProvider;
     private final MemberDao memberDao;
 
-
     @Override
     public  Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
         return Member.builder()
@@ -46,6 +45,21 @@ public class MemberServiceImpl implements MemberService {
                 .update_At(LocalDateTime.now())
                 .build();
     }
+
+    @Override
+    public Member createGoogleUser(GoogleResponseDto googleResponseDto) {
+        return Member.builder()
+                .name(googleResponseDto.getName())
+                .email(googleResponseDto.getEmail())
+                .profileUrl(googleResponseDto.getProfileUrl())
+                .loginMethod("Google")
+                .password("pass")
+                .passwordCheck("pass")
+                .create_At(LocalDateTime.now())
+                .update_At(LocalDateTime.now())
+                .build();
+    }
+
     @Override
     public  Member createUser(SignReqeustDto signReqeustDto) {
         // 비밀번호 일치 여부 확인
@@ -65,6 +79,7 @@ public class MemberServiceImpl implements MemberService {
                 .loginMethod("Normal")
                 .gender(signReqeustDto.getGender())
                 .name(signReqeustDto.getName())
+                .address(signReqeustDto.getAddress())
                 .create_At(LocalDateTime.now())
                 .update_At(LocalDateTime.now())
                 .build();
@@ -123,8 +138,8 @@ public class MemberServiceImpl implements MemberService {
             if(jwtProvider.validToken(token)){
                 member.setPhoneNum(requestDto.getPhoneNum());
                 member.setEmail(requestDto.getEmail());
-                member.setPassword(requestDto.getPassword());
-                member.setPasswordCheck(requestDto.getPasswordCheck());
+                member.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+                member.setPasswordCheck(passwordEncoder.encode(requestDto.getPasswordCheck()));
                 member.setBirthDate(requestDto.getBirtDate());
                 member.setGender(requestDto.getGender());
                 memberDao.save(member);
@@ -138,11 +153,10 @@ public class MemberServiceImpl implements MemberService {
         return resultDto;
     }
 
-    private void saveMemberRole(Member member, Team team , String role){
-        MemberRole memberRole = new MemberRole();
-        memberRole.setMember(member);
-        memberRole.setTeam(team);
-        memberRole.setRole(role);
-
+    private void saveTeamMember(Member member, Team team , String role){
+        TeamMember teamMember = new TeamMember();
+        teamMember.setMember(member);
+        teamMember.setTeam(team);
+        teamMember.setRole(role);
     }
 }

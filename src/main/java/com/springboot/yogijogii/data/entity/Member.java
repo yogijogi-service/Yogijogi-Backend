@@ -3,19 +3,17 @@ package com.springboot.yogijogii.data.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.springboot.yogijogii.data.dto.authDto.AdditionalInfoDto;
-import com.springboot.yogijogii.data.dto.authDto.KakaoResponseDto;
-import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,8 +72,8 @@ public class Member implements UserDetails {
     @Override
     @Transactional
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.memberRoles.stream()
-                .map(memberRole -> new SimpleGrantedAuthority(memberRole.getRole()))
+        return this.teamMembers.stream()
+                .map(teamMember -> new SimpleGrantedAuthority(teamMember.getRole()))
                 .collect(Collectors.toList());
     }
 
@@ -110,13 +108,6 @@ public class Member implements UserDetails {
         return true;
     }
 
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> joinTeam;
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<String> createTeam;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @BatchSize(size=1)
@@ -124,18 +115,21 @@ public class Member implements UserDetails {
     private Team team;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<MemberRole> memberRoles;
+    private List<TeamMember> teamMembers;
 
-    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY)
-    private List<JoinForms> joinForms;
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    private List<ServiceRole> serviceRoles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Announcement> announcements = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "memberAgreement_id", referencedColumnName = "id")
     private MemberAgreement memberAgreement;
 
-    public List<MemberRole> getMemberRolesWithInit() {
-        Hibernate.initialize(memberRoles);
-        return memberRoles;
+    public List<TeamMember> getMemberRolesWithInit() {
+        Hibernate.initialize(teamMembers);
+        return teamMembers;
     }
 
     public void addKakaoAdditionalInfo(AdditionalInfoDto additionalInfoDto) {

@@ -1,16 +1,13 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.data.dao.MemberRoleDao;
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.SignDao;
 import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
-import com.springboot.yogijogii.data.dto.signDto.ResultDto;
+import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
-import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.MemberAgreement;
-import com.springboot.yogijogii.data.entity.MemberRole;
-import com.springboot.yogijogii.data.entity.Team;
+import com.springboot.yogijogii.data.entity.*;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.MemberService;
@@ -22,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +32,7 @@ public class SignServiceImpl implements SignService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final MemberRoleDao memberRoleDao;
+    private final TeamMemberDao teamMemberDao;
 
     @Override
     public ResultDto SignUpSmsVerify(String certificationNumber, HttpServletRequest request) {
@@ -86,10 +84,11 @@ public class SignServiceImpl implements SignService {
             member.setMemberAgreement(memberAgreement);
             memberAgreement.setMember(member);
 
-
             //디비 저장이용
             signDao.saveSignUpInfo(member);
             signDao.saveMemberAgree(memberAgreement);
+            addServiceRoleManager(member);
+
             resultDto.setDetailMessage("회원가입 완료.");
             setSuccess(resultDto);
         }else{
@@ -115,8 +114,8 @@ public class SignServiceImpl implements SignService {
         // 토큰 생성
         String accessToken = jwtProvider.createToken(
                 String.valueOf(member.getEmail()),
-                member.getMemberRoles().stream()
-                        .map(MemberRole::getRole)
+                member.getTeamMembers().stream()
+                        .map(TeamMember::getRole)
                         .collect(Collectors.toList())
         );
 
@@ -145,10 +144,29 @@ public class SignServiceImpl implements SignService {
         resultDto.setSuccess(true);
         resultDto.setCode(CommonResponse.SUCCESS.getCode());
         resultDto.setMsg(CommonResponse.SUCCESS.getMsg());
+
     }
     private void setFail(ResultDto resultDto){
         resultDto.setSuccess(false);
         resultDto.setCode(CommonResponse.Fail.getCode());
         resultDto.setMsg(CommonResponse.Fail.getMsg());
+        throw new IllegalArgumentException("인증 실패");
+    }
+
+    private void addServiceRoleManager(Member member) {
+        if (member.getServiceRoles() == null) {
+            member.setServiceRoles(new ArrayList<>());
+        }
+        ServiceRole serviceRole = new ServiceRole();
+        serviceRole.setMember(member);
+        serviceRole.setRole("ROLE_USER"); // 권장되는 권한 이름으로 변경
+        member.getServiceRoles().add(serviceRole);
+        teamMemberDao.saveServiceRole(serviceRole);
+        // member의 serviceRole 필드를 설정하여 ID가 저장되도록 함
+        // member의 serviceRole 필드도 설정
+        member.setServiceRole("ROLE_USER");
+        teamMemberDao.saveServiceRole(serviceRole);
+
+
     }
 }

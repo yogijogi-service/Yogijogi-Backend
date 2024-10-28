@@ -1,6 +1,5 @@
 package com.springboot.yogijogii.data.entity;
 
-import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
 import lombok.*;
 
 import javax.persistence.*;
