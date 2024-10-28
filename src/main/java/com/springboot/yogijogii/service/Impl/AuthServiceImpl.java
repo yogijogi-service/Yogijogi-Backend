@@ -77,7 +77,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public SignInResultDto getKakaoUserInfo(String authorizeCode) {
+    public SignInResultDto getKakaoAccessToken(String authorizeCode) {
         log.info("[kakao login] issue a authorizeCode");
         ObjectMapper objectMapper = new ObjectMapper(); //json 파싱 객체
         RestTemplate restTemplate = new RestTemplate(); //client 연결 객체
@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignInResultDto getGoogleUserInfo(String authorizeCode) {
+    public SignInResultDto getGoogleAccessToken(String authorizeCode) {
         log.info("[google login] issue a authorizeCode: {}", authorizeCode);
         ObjectMapper objectMapper = new ObjectMapper();
         RestTemplate restTemplate = new RestTemplate();
@@ -175,11 +175,7 @@ public class AuthServiceImpl implements AuthService {
 
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
                     .name((String) kakaoAccount.get("name"))
-                    .phoneNum((String) kakaoAccount.get("phone_number"))
                     .email((String) kakaoAccount.get("email"))
-                    .gender((String) kakaoAccount.get("gender"))
-                    .birthDate((String) kakaoAccount.get("birthday"))
-                    .profileUrl((String) profile.get("profile_image_url"))
                     .build();
 
             return responseDto;
@@ -204,17 +200,30 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<String> response = restTemplate.exchange(googleUserInfoUrl, HttpMethod.GET, entity, String.class);
 
         try {
-            Map<String,Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            log.info("[Google User Info Response] : {}", responseMap);
+
+            // emailAddresses 리스트에서 이메일 추출
+            List<Map<String, Object>> emailAddresses = (List<Map<String, Object>>) responseMap.get("emailAddresses");
+            String email = null;
+            if (emailAddresses != null && !emailAddresses.isEmpty()) {
+                email = (String) emailAddresses.get(0).get("value");
+            }
+
+            if (email == null) {
+                log.error("Google 계정에서 이메일을 제공하지 않았습니다.");
+                return null;
+            }
 
             GoogleResponseDto googleResponseDto = GoogleResponseDto.builder()
-                    .name((String) responseMap.get("name"))
-                    .email((String) responseMap.get("email"))
-                    .profileUrl((String) responseMap.get("picture"))
+                    .name((String) ((List<Map<String, Object>>) responseMap.get("names")).get(0).get("displayName"))
+                    .email(email)
                     .build();
 
             return googleResponseDto;
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Google 사용자 정보 조회 중 오류 발생", e);
             return null;
         }
     }
@@ -225,7 +234,7 @@ public class AuthServiceImpl implements AuthService {
 
         SignInResultDto signInResultDto = new SignInResultDto();
         if (kakaoUserInfoResponse == null) {
-            return handleSignInFailure(signInResultDto, "Failed to get Kakao user info");
+            return handleSignInFailure(signInResultDto, "Failed to get Google user info");
         }
 
         Member member = authDao.findMember(kakaoUserInfoResponse.getEmail());
@@ -276,7 +285,7 @@ public class AuthServiceImpl implements AuthService {
 
         SignInResultDto signInResultDto = new SignInResultDto();
         if (googleResponseDto == null) {
-            return handleSignInFailure(signInResultDto, "Failed to get Kakao user info");
+            return handleSignInFailure(signInResultDto, "Failed to get Google user info");
         }
 
         Member member = authDao.findMember(googleResponseDto.getEmail());
@@ -332,12 +341,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResultDto kakao_additionalInfo(AdditionalInfoDto additionalInfoDto , HttpServletRequest request) {
+    public ResultDto auth_additionalInfo(AdditionalInfoDto additionalInfoDto , HttpServletRequest request) {
         String info = jwtProvider.getUsername(request.getHeader("X-AUTH-TOKEN"));
         Member member = memberRepository.getByEmail(info);
         ResultDto resultDto = new ResultDto();
 
+
         if (member != null) {
+
             member.addKakaoAdditionalInfo(additionalInfoDto); // 기존 User 객체를 전달하여 새로운 User 객체 생성
             authDao.saveMember(member);
             resultStatusService.setSuccess(resultDto);

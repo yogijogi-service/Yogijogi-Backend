@@ -117,7 +117,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     public  String saveImageS3(MultipartFile profileImage) throws IOException {
-        return s3Uploader.uploadImage(profileImage,"image");
+        return s3Uploader.uploadImage(profileImage,"yogijogi");
     }
 
     private String make_InviteCode(){

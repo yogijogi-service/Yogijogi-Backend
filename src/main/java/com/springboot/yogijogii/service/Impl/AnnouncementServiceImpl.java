@@ -108,7 +108,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     public String saveImageS3(MultipartFile profileImage) throws IOException {
         if (profileImage != null && !profileImage.isEmpty()) {
-            return s3Uploader.uploadImage(profileImage, "image/announcement");
+            return s3Uploader.uploadImage(profileImage, "yogijogi");
         }
         return null;
     }

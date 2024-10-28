@@ -127,7 +127,7 @@ public class Member implements UserDetails {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<ServiceRole> serviceRoles = new ArrayList<>();
-
+    
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Announcement> announcements = new ArrayList<>();
 
@@ -141,8 +141,12 @@ public class Member implements UserDetails {
     }
 
     public void addKakaoAdditionalInfo(AdditionalInfoDto additionalInfoDto) {
+        this.phoneNum = additionalInfoDto.getPhoneNum();
+        this.birthDate = additionalInfoDto.getBirthDate();
         this.level = additionalInfoDto.getLevel();
         this.hasExperience = additionalInfoDto.isHasExperience();
+        this.gender = additionalInfoDto.getGender();
+        this.address = additionalInfoDto.getAddress();
         this.update_At = LocalDateTime.now();
     }
 }

@@ -11,5 +11,4 @@ import lombok.*;
 public class GoogleResponseDto {
     private String name;
     private String email;
-    private String profileUrl;
 }
