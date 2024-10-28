@@ -171,11 +171,8 @@ public class AuthServiceImpl implements AuthService {
 
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
                     .name((String) kakaoAccount.get("name"))
-                    .phoneNum((String) kakaoAccount.get("phone_number"))
                     .email((String) kakaoAccount.get("email"))
-                    .gender((String) kakaoAccount.get("gender"))
-                    .birthDate((String) kakaoAccount.get("birthday"))
-                    .profileUrl((String) profile.get("profile_image_url"))
+
                     .build();
 
             return responseDto;
@@ -200,17 +197,30 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<String> response = restTemplate.exchange(googleUserInfoUrl, HttpMethod.GET, entity, String.class);
 
         try {
-            Map<String,Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), new TypeReference<Map<String, Object>>() {});
+            log.info("[Google User Info Response] : {}", responseMap);
+
+            // emailAddresses 리스트에서 이메일 추출
+            List<Map<String, Object>> emailAddresses = (List<Map<String, Object>>) responseMap.get("emailAddresses");
+            String email = null;
+            if (emailAddresses != null && !emailAddresses.isEmpty()) {
+                email = (String) emailAddresses.get(0).get("value");
+            }
+
+            if (email == null) {
+                log.error("Google 계정에서 이메일을 제공하지 않았습니다.");
+                return null;
+            }
 
             GoogleResponseDto googleResponseDto = GoogleResponseDto.builder()
-                    .name((String) responseMap.get("name"))
-                    .email((String) responseMap.get("email"))
-                    .profileUrl((String) responseMap.get("picture"))
+                    .name((String) ((List<Map<String, Object>>) responseMap.get("names")).get(0).get("displayName"))
+                    .email(email)
                     .build();
 
             return googleResponseDto;
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Google 사용자 정보 조회 중 오류 발생", e);
             return null;
         }
     }
@@ -341,7 +351,7 @@ public class AuthServiceImpl implements AuthService {
         ResultDto resultDto = new ResultDto();
 
         if (member != null) {
-            member.addKakaoAdditionalInfo(additionalInfoDto); // 기존 User 객체를 전달하여 새로운 User 객체 생성
+            member.addAuthAdditionalInfo(additionalInfoDto); // 기존 User 객체를 전달하여 새로운 User 객체 생성
             authDao.saveMember(member);
             resultStatusService.setSuccess(resultDto);
         } else {

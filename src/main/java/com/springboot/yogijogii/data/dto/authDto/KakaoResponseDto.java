@@ -10,9 +10,5 @@ import lombok.*;
 @Builder
 public class KakaoResponseDto {
     private String name;
-    private String phoneNum;
     private String email;
-    private String profileUrl;
-    private String gender;
-    private String birthDate;
 }

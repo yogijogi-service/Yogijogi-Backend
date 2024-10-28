@@ -8,10 +8,12 @@ import lombok.Setter;
 @Setter
 @Builder
 public class AdditionalInfoDto {
-
     private boolean hasExperience;
-
     private String level;
+    private String phoneNum;
+    private String gender;
+    private String birthDate;
+    private String address;
 
 
 }

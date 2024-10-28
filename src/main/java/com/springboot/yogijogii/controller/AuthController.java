@@ -57,6 +57,7 @@ public class AuthController {
         return response;
     }
     @GetMapping("/kakao/callback")
+    @ResponseBody
     public ResponseEntity<?> getKakaoAuthorizeCode(@RequestParam("code") String authorizeCode) {
         log.info("[kakao-login] Received authorizeCode: {}", authorizeCode);
 
@@ -68,6 +69,7 @@ public class AuthController {
     }
 
     @GetMapping("/google/callback")
+    @ResponseBody
     public ResponseEntity<?> getGoogleAuthorizeCode(@RequestParam("code") String authorizeCode) {
         log.info("[kakao-login] Received authorizeCode: {}", authorizeCode);
 
@@ -91,7 +93,7 @@ public class AuthController {
     }
 
 
-    @PutMapping("/kakao/add-info")
+    @PutMapping("/add-info")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<ResultDto> kakao_additionalInfo(AdditionalInfoDto additionalInfoDto , HttpServletRequest request){
         ResultDto resultDto = authService.kakao_additionalInfo(additionalInfoDto,request);
