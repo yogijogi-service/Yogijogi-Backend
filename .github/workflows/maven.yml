@@ -54,7 +54,7 @@ jobs:
           username: ${{ secrets.YOGIJOGI_USERNAME }}
           key: ${{ secrets.YOGIJOGI_SSH_PRIVATE_KEY }}
           script: |
-            sudo docker network create peanut || true
+            sudo docker network create yogijogi || true
             sudo docker stop yogijogi-backend || true
             sudo docker rm yogijogi-backend || true
             sudo docker pull ${{ secrets.YOGIJOGI_DOCKER_REPO }}/yogijogi-backend:latest
