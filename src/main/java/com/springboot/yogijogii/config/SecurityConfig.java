@@ -48,6 +48,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
                         "/api/sign/exception","/main-api/**","/api/auth/**").permitAll() // 가입 및 로그인 주소는 허용
                 .antMatchers("/api/team/**","api/search/**").authenticated()
                 .antMatchers("/api/announcement/manager/**").hasRole("MANAGER")
+                .antMatchers("/test/**").permitAll()
                 .antMatchers("**exception**").permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
