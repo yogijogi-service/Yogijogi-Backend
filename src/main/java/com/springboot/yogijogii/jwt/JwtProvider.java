@@ -48,6 +48,7 @@ public class JwtProvider {
         logger.info(" [init] 시크릿 키 초기화 시작 ");
         System.out.println("secretKey : "+secretKey);
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        refreshSecretKey = Base64.getEncoder().encodeToString(refreshSecretKey.getBytes());
 
         System.out.println(secretKey);
         logger.info("[init] 시크릿 키 초기화 완료 : {} " , secretKey);
