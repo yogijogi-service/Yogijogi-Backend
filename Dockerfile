@@ -5,7 +5,7 @@ FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # 3. 빌드된 JAR 파일을 컨테이너로 복사
-COPY target/Peanut-0.0.1-SNAPSHOT.jar app.jar
+COPY target/yogijogi-0.0.1-SNAPSHOT.jar app.jar
 
 # 4. 설정 파일 복사
 COPY config/application.properties /app/config/application.properties
