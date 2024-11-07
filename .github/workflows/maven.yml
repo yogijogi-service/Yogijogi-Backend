@@ -58,4 +58,4 @@ jobs:
             sudo docker stop yogijogi-backend || true
             sudo docker rm yogijogi-backend || true
             sudo docker pull ${{ secrets.YOGIJOGI_DOCKER_REPO }}/yogijogi-backend:latest
-            sudo docker run -d -p 8080:8080 --net yogijogi --name peanut-backend ${{ secrets.YOGIJOGI_DOCKER_REPO }}/yogijogi-backend:latest
+            sudo docker run -d -p 8080:8080 --net yogijogi --name yogijogi-backend ${{ secrets.YOGIJOGI_DOCKER_REPO }}/yogijogi-backend:latest
