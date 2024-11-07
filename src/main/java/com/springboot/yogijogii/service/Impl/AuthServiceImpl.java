@@ -172,7 +172,6 @@ public class AuthServiceImpl implements AuthService {
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
                     .name((String) kakaoAccount.get("name"))
                     .email((String) kakaoAccount.get("email"))
-
                     .build();
 
             return responseDto;
