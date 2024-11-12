@@ -15,6 +15,7 @@ import com.springboot.yogijogii.service.SignService;
 import com.springboot.yogijogii.service.SmsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -137,6 +138,15 @@ public class SignServiceImpl implements SignService {
         signInResultDto.setDetailMessage("로그인 성공");
         setSuccess(signInResultDto);
         return signInResultDto;
+    }
+
+    @Override
+    public ResultDto checkEmail(String email) {
+        if(memberRepository.existsByEmail(email)) {
+            throw new RuntimeException("이미 존재하는 이메일 입니다.");
+        }
+        ResultDto resultDto = new ResultDto(true, HttpStatus.OK.value(), "사용가능한 이메일 입니다.", "");
+        return resultDto;
     }
 
 

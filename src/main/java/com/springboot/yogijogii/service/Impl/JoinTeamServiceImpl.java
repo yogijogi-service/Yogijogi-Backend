@@ -14,6 +14,7 @@ import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.JoinTeamService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,9 +74,11 @@ public class JoinTeamServiceImpl implements JoinTeamService {
             
             joinTeamDao.save(joinTeam);
             resultDto.setSuccess(true);
+            resultDto.setCode(HttpStatus.OK.value());
             resultDto.setMsg("팀 가입요청을 성공하였습니다.");
         } catch (Exception e) {
             resultDto.setSuccess(false);
+            resultDto.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             resultDto.setMsg("팀 가입 요청 실패: " + e.getMessage());
         }
         return resultDto;
@@ -91,6 +94,12 @@ public class JoinTeamServiceImpl implements JoinTeamService {
             Member member = memberDao.findMemberByEmail(email);
 
             Team team = teamDao.findByInviteCode(inviteCode);
+            boolean isAlreadyMember = teamMemberDao.existsByMemberAndTeam(member, team);
+            if (isAlreadyMember) {
+                resultDto.setSuccess(false);
+                resultDto.setMsg("이미 이 팀의 멤버로 소속되어 있습니다.");
+                return resultDto;
+            }
             if (team == null) {
                 throw new IllegalArgumentException("유효하지 않은 초대 코드입니다.");
             }
@@ -110,6 +119,4 @@ public class JoinTeamServiceImpl implements JoinTeamService {
         }
         return resultDto;
     }
-
-
 }
