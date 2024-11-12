@@ -6,4 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface AdminTeamService {
     ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant);
+
+    ResultDto grantMangerRole(HttpServletRequest servletRequest, Long teamMemberId);
 }
