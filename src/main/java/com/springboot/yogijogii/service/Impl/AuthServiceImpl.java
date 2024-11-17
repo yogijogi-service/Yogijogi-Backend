@@ -241,9 +241,11 @@ public class AuthServiceImpl implements AuthService {
             authDao.saveMember(member);
             addServiceRoleManager(member);
             resultStatusService.setSuccess(signInResultDto);
+            signInResultDto.setNewUser(true);
             signInResultDto.setDetailMessage("회원가입 완료.");
         } else {
             resultStatusService.setSuccess(signInResultDto);
+            signInResultDto.setNewUser(false);
             signInResultDto.setDetailMessage("로그인 성공.");
         }
 
@@ -292,9 +294,11 @@ public class AuthServiceImpl implements AuthService {
             authDao.saveMember(member);
             addServiceRoleManager(member);
             resultStatusService.setSuccess(signInResultDto);
+            signInResultDto.setNewUser(true);
             signInResultDto.setDetailMessage("회원가입 완료.");
         } else {
             resultStatusService.setSuccess(signInResultDto);
+            signInResultDto.setNewUser(false);
             signInResultDto.setDetailMessage("로그인 성공.");
         }
 
