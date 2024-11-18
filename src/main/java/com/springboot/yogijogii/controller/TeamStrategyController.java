@@ -22,12 +22,12 @@ import java.util.List;
 public class TeamStrategyController {
 
     private final AdminTeamService adminTeamService;
-//
-//    @GetMapping("/get/team-member")
-//    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-//    ResponseEntity<List<TeamMemberByPositionDto>>getTeamMemberByPosition(@RequestParam Long teamId, String position, HttpServletRequest servletRequest) {
-//        List<TeamMemberByPositionDto> teamMemberByPositionDtos = adminTeamService.getTeamMemberByPosition(teamId, position, servletRequest);
-//        return ResponseEntity.status(HttpStatus.OK).body(teamMemberByPositionDtos);
-//    }
+
+    @GetMapping("/get/team-member")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    ResponseEntity<List<TeamMemberByPositionDto>>getTeamMemberByPosition(@RequestParam Long teamId, @RequestParam  String position, HttpServletRequest servletRequest) {
+        List<TeamMemberByPositionDto> teamMemberByPositionDtos = adminTeamService.getTeamMemberByPosition(teamId, position, servletRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(teamMemberByPositionDtos);
+    }
 
 }

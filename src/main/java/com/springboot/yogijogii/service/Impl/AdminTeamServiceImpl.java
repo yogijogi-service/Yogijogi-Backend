@@ -60,7 +60,27 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         return resultDto;
     }
 
+    @Override
+    public List<TeamMemberByPositionDto> getTeamMemberByPosition(Long teamId, String position, HttpServletRequest request) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        Long userId = member.getMemberId();
+        boolean isManger = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if(!isManger){
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저권한이 없습니다.");
+        }
+        Optional<List<TeamMember>> teamMembers = teamMemberDao.getTeamMemberByUserIdAndPosition(teamId, position);
+        List<TeamMemberByPositionDto> teamMemberByPositionDtoList = new ArrayList<>();
+        for(TeamMember teamMember : teamMembers.get()){
+            TeamMemberByPositionDto teamMemberByPositionDto = new TeamMemberByPositionDto(
+                    teamMember.getId(),
+                    teamMember.getMember().getName(),
+                    teamMember.getPosition()
+            );
+            teamMemberByPositionDtoList.add(teamMemberByPositionDto);
+        }
 
+        return teamMemberByPositionDtoList;
+    }
 }
 
 

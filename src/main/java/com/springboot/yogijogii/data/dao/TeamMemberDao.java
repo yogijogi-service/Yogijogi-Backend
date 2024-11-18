@@ -32,5 +32,7 @@ public interface TeamMemberDao {
 
     void delete(TeamMember teamMember);
 
+    Optional<List<TeamMember>> getTeamMemberByUserIdAndPosition(Long userId, String position);
+    boolean isTeamMemberAndManager(Long userId, Long teamId);
 
 }

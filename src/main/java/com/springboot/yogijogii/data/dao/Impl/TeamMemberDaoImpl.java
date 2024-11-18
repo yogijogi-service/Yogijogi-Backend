@@ -77,7 +77,13 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
         teamMemberRepository.save(teamMember);
     }
 
+    @Override
+    public Optional<List<TeamMember>> getTeamMemberByUserIdAndPosition(Long userId, String position) {
+        return teamMemberRepository.getTeamMemberByUserIdAndPosition(userId,position);
+    }
 
-
-
+    @Override
+    public boolean isTeamMemberAndManager(Long userId, Long teamId) {
+        return teamMemberRepository.isTeamMemberAndManager(userId,teamId);
+    }
 }
