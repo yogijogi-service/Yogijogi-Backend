@@ -1,30 +1,35 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.MemberDao;
+import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dto.ResultDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.entity.TeamMember;
+import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.AdminTeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AdminTeamServiceImpl implements AdminTeamService {
-    private final JwtProvider jwtProvider;
-    private final MemberDao memberDao;
+    private final JwtAuthenticationService jwtAuthenticationService;
     private final TeamMemberDao teamMemberDao;
+    private final TeamDao teamDao;
 
     @Override
     public ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant) {
-        String token = jwtProvider.resolveToken(servletRequest);
-        String email = jwtProvider.getUsername(token);
-        Member member = memberDao.findMemberByEmail(email);
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
         ResultDto resultDto = new ResultDto();
         TeamMember teamMember = teamMemberDao.findById(teamMemberId);
@@ -52,4 +57,7 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         teamMemberDao.save(teamMember);
         return resultDto;
     }
+
 }
+
+

@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.data.dao;
 
+import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.ServiceRole;
@@ -7,6 +8,7 @@ import com.springboot.yogijogii.data.entity.Team;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TeamMemberDao {
     void saveTeamMember(TeamMember teamMember);
@@ -29,4 +31,6 @@ public interface TeamMemberDao {
     TeamMember findByMemberAndTeam(Member member, Team team);
 
     void delete(TeamMember teamMember);
+
+
 }
