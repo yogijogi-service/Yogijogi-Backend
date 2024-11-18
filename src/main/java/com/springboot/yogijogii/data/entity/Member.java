@@ -133,7 +133,6 @@ public class Member implements UserDetails {
     }
 
     public void addAuthAdditionalInfo(AdditionalInfoDto additionalInfoDto) {
-        this.phoneNum = additionalInfoDto.getPhoneNum();
         this.birthDate = additionalInfoDto.getBirthDate();
         this.level = additionalInfoDto.getLevel();
         this.hasExperience = additionalInfoDto.isHasExperience();

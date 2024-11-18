@@ -11,4 +11,5 @@ import lombok.*;
 public class KakaoResponseDto {
     private String name;
     private String email;
+    private String phoneNum;
 }
