@@ -1,8 +1,10 @@
 package com.springboot.yogijogii.service.Impl;
 
 import com.springboot.yogijogii.data.dao.MemberDao;
+import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dto.ResultDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.entity.TeamMember;
@@ -15,20 +17,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AdminTeamServiceImpl implements AdminTeamService {
     private final JwtAuthenticationService jwtAuthenticationService;
-    private final JwtProvider jwtProvider;
-    private final MemberDao memberDao;
     private final TeamMemberDao teamMemberDao;
+    private final TeamDao teamDao;
 
     @Override
     public ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant) {
-        String token = jwtProvider.resolveToken(servletRequest);
-        String email = jwtProvider.getUsername(token);
-        Member member = memberDao.findMemberByEmail(email);
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
         ResultDto resultDto = new ResultDto();
         TeamMember teamMember = teamMemberDao.findById(teamMemberId);
@@ -57,27 +60,7 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         return resultDto;
     }
 
-    @Override
-    public ResultDto grantMangerRole(HttpServletRequest servletRequest, Long teamMemberId) {
-        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
-        TeamMember teamMember = teamMemberDao.findById(teamMemberId);
 
-        Team team = teamMember.getTeam();
-        TeamMember manager = teamMemberDao.findByMemberAndTeam(member, team);
-        boolean isManager = teamMemberDao.existsByMemberAndTeamAndRole(member, team, "ROLE_MANAGER");
-
-        if(!isManager){
-            throw new RuntimeException("해당팀에 매니저가 아닙니다.");
-        }
-        if(!teamMember.getRole().equals("ROLE_SUBMANAGER")){
-            throw new RuntimeException("오직 부매니저에게만 매니저 역할을 부여할 수 있습니다.");
-        }
-        teamMember.setRole("ROLE_MANAGER");
-        manager.setRole("ROLE_SUBMANAGER");
-
-        teamMemberDao.save(teamMember);
-        teamMemberDao.save(manager);
-
-        return new ResultDto(true, HttpStatus.OK.value(), "해당 맴버에게 매니저 역할을 부여하였고, 본인은 부매니저로 강등되었습니다.", "");
-    }
 }
+
+

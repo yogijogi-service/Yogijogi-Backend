@@ -5,11 +5,10 @@ import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
-import java.util.Optional;
 
-public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
+
+public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>,TeamMemberRepositoryCustom {
     boolean existsByMemberAndTeamAndRole(Member member, Team team, String role);
 
     boolean existsByMemberAndTeam(Member member, Team team);

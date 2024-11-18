@@ -1,6 +1,7 @@
 package com.springboot.yogijogii.data.dao.Impl;
 
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
+import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.ServiceRole;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.springboot.yogijogii.data.entity.QTeam.team;
 
@@ -74,5 +76,8 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     public void save(TeamMember teamMember) {
         teamMemberRepository.save(teamMember);
     }
+
+
+
 
 }
