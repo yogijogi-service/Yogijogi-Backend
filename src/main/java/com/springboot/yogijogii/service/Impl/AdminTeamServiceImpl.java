@@ -12,6 +12,8 @@ import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
 import com.springboot.yogijogii.service.AdminTeamService;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.protocol.HTTP;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +59,7 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         teamMemberDao.save(teamMember);
         return resultDto;
     }
+
 
 }
 

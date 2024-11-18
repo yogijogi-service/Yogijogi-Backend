@@ -20,12 +20,20 @@ import javax.servlet.http.HttpServletRequest;
 public class AdminTeamController {
     private final AdminTeamService adminTeamService;
 
-    @PutMapping("/role")
+    @PutMapping("/updateSubManagerRole")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<ResultDto> updateSubManagerRole(HttpServletRequest servletRequest,
                                                           @RequestParam Long teamMemberId,
                                                           @RequestParam boolean grant) {
         ResultDto resultDto = adminTeamService.updateSubManagerRole(servletRequest, teamMemberId, grant);
+        return ResponseEntity.status(HttpStatus.OK).body(resultDto);
+    }
+
+    @PutMapping("/grantManagerRole")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<ResultDto> grantManagerRole(HttpServletRequest servletRequest,
+                                                          @RequestParam Long teamMemberId) {
+        ResultDto resultDto = adminTeamService.grantMangerRole(servletRequest, teamMemberId);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 }

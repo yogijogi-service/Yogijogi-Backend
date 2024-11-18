@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface AdminTeamService {
     ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant);
+
 }
+

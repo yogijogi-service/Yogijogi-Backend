@@ -15,4 +15,5 @@ public interface SignService {
 
     SignInResultDto SignIn(String email, String password);
 
+    ResultDto checkEmail(String email);
 }
