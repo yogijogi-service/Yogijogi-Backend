@@ -34,6 +34,7 @@ public class MemberServiceImpl implements MemberService {
         return Member.builder()
                 .email(kakaoUserInfoResponse.getEmail())
                 .name(kakaoUserInfoResponse.getName())
+                .phoneNum(kakaoUserInfoResponse.getPhoneNum())
                 .loginMethod("Kakao")
                 .password("pass")
                 .passwordCheck("pass")

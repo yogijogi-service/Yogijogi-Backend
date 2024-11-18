@@ -169,9 +169,14 @@ public class AuthServiceImpl implements AuthService {
             Map<String, Object> kakaoAccount = (Map<String, Object>) responseMap.get("kakao_account");
             Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
+            // 전화번호 변환
+            String rawPhoneNumber = (String) kakaoAccount.get("phone_number");
+            String formattedPhoneNumber = formatPhoneNumber(rawPhoneNumber);
+
             KakaoResponseDto responseDto = KakaoResponseDto.builder()
                     .name((String) kakaoAccount.get("name"))
                     .email((String) kakaoAccount.get("email"))
+                    .phoneNum(formattedPhoneNumber)
                     .build();
 
             return responseDto;
@@ -376,5 +381,15 @@ public class AuthServiceImpl implements AuthService {
         serviceRole.setRole("Role_User");
         teamMemberDao.saveServiceRole(serviceRole);
     }
+    // 전화번호 변환 유틸리티 메서드 추가
+    private String formatPhoneNumber(String rawPhoneNumber) {
+        if (rawPhoneNumber == null || !rawPhoneNumber.startsWith("+82")) {
+            return rawPhoneNumber; // 변환이 필요 없는 경우 원본 반환
+        }
+        rawPhoneNumber = rawPhoneNumber.replaceAll("\\s+", "");
+        // +82 -> 0
+        String localPhoneNumber = rawPhoneNumber.replace("+82", "0");
 
+        return localPhoneNumber;
+    }
 }
