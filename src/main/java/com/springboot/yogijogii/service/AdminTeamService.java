@@ -9,6 +9,9 @@ import java.util.Optional;
 
 public interface AdminTeamService {
     ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant);
+
     List<TeamMemberByPositionDto> getTeamMemberByPosition(Long teamId,String position,HttpServletRequest servletRequest);
+
+    ResultDto grantMangerRole(HttpServletRequest servletRequest, Long teamMemberId);
 }
 

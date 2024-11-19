@@ -81,6 +81,32 @@ public class AdminTeamServiceImpl implements AdminTeamService {
 
         return teamMemberByPositionDtoList;
     }
+
+    @Override
+    public ResultDto grantMangerRole(HttpServletRequest servletRequest, Long teamMemberId) {
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
+        TeamMember teamMember = teamMemberDao.findById(teamMemberId);
+
+        Team team = teamMember.getTeam();
+        TeamMember manager = teamMemberDao.findByMemberAndTeam(member, team);
+        boolean isManager = teamMemberDao.existsByMemberAndTeamAndRole(member, team, "ROLE_MANAGER");
+
+        if(!isManager){
+            throw new RuntimeException("해당팀에 매니저가 아닙니다.");
+        }
+        if(!teamMember.getRole().equals("ROLE_SUBMANAGER")){
+            throw new RuntimeException("오직 부매니저에게만 매니저 역할을 부여할 수 있습니다.");
+        }
+        teamMember.setRole("ROLE_MANAGER");
+        manager.setRole("ROLE_SUBMANAGER");
+
+        teamMemberDao.save(teamMember);
+        teamMemberDao.save(manager);
+
+        return new ResultDto(true, HttpStatus.OK.value(), "해당 맴버에게 매니저 역할을 부여하였고, 본인은 부매니저로 강등되었습니다.", "");
+    }
+
+
 }
 
 
