@@ -3,6 +3,7 @@ package com.springboot.yogijogii.data.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,14 @@ public class Formation {
 
     private String name;
 
-    @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL)
-    private List<FormationDetail> details; // 포메이션의 세부 정보
+    @OneToMany(mappedBy = "formation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FormationDetail> details = new ArrayList<>(); // 초기화 추가
+
+    public void addFormationDetail(FormationDetail detail) {
+        if (this.details == null) { // null 체크 추가
+            this.details = new ArrayList<>();
+        }
+        this.details.add(detail);
+        detail.setFormation(this); // 양방향 관계 설정
+    }
 }
