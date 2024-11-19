@@ -73,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public SignInResultDto getKakaoUserInfo(String authorizeCode) {
+    public SignInResultDto getKakaoUserInfo(String authorizeCode,HttpServletRequest request) {
         log.info("[kakao login] issue a authorizeCode");
         ObjectMapper objectMapper = new ObjectMapper(); //json 파싱 객체
         RestTemplate restTemplate = new RestTemplate(); //client 연결 객체
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
 
             Object accessToken = responseMap.get("access_token");
 
-            return kakao_SignIn((String)accessToken);
+            return kakao_SignIn((String)accessToken,request);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignInResultDto getGoogleUserInfo(String authorizeCode) {
+    public SignInResultDto getGoogleUserInfo(String authorizeCode,HttpServletRequest request) {
         log.info("[google login] issue a authorizeCode: {}", authorizeCode);
         ObjectMapper objectMapper = new ObjectMapper();
         RestTemplate restTemplate = new RestTemplate();
@@ -143,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
             String accessToken = (String) responseMap.get("access_token");
             log.info("[accessToken] : {}", accessToken);
 
-            return google_SignIn(accessToken);
+            return google_SignIn(accessToken,request);
 
         } catch (Exception e) {
             log.error("An error occurred while fetching Google access token", e);
@@ -230,12 +230,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SignInResultDto kakao_SignIn(String accessToken) {
+    public SignInResultDto kakao_SignIn(String accessToken , HttpServletRequest request) {
         KakaoResponseDto kakaoUserInfoResponse = getKakaoInfo(accessToken);
 
         SignInResultDto signInResultDto = new SignInResultDto();
         if (kakaoUserInfoResponse == null) {
-            return handleSignInFailure(signInResultDto, "Failed to get Kakao user info");
+            return handleSignInFailure(signInResultDto, "카카오 유저 정보를 받아오지 못했습니다.");
         }
 
         Member member = authDao.findMember(kakaoUserInfoResponse.getEmail());
@@ -243,39 +243,17 @@ public class AuthServiceImpl implements AuthService {
         if (member == null) {
             member = memberService.createKakaoUser(kakaoUserInfoResponse);
             member.setServiceRole("ROLE_USER");
-            authDao.saveMember(member);
-            addServiceRoleManager(member);
+            request.getSession().setAttribute("partialMember", member);
             resultStatusService.setSuccess(signInResultDto);
-            signInResultDto.setNewUser(true);
-            signInResultDto.setDetailMessage("회원가입 완료.");
+            signInResultDto.setToken(null);
+            signInResultDto.setRefreshToken(null);
+            signInResultDto.setDetailMessage("추가 정보 입력하세요.");
         } else {
             resultStatusService.setSuccess(signInResultDto);
             signInResultDto.setNewUser(false);
             signInResultDto.setDetailMessage("로그인 성공.");
+            generateAndSetTokens(member,signInResultDto);
         }
-
-
-        String accessTokenNew = jwtProvider.createToken(member.getEmail(), List.of("ROLE_USER"));
-
-        String existingRefreshToken = member.getRefreshToken(); // 기존 Refresh Token 가져오기
-        String refreshToken;
-
-        if (existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
-            // 기존 Refresh Token이 유효하면 그대로 사용
-            refreshToken = existingRefreshToken;
-        } else {
-            // 기존 Refresh Token이 없거나 만료되었으면 새로 발급
-            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
-            member.setRefreshToken(refreshToken); // 새로운 Refresh Token을 DB에 저장 (필요할 경우)
-            authDao.saveMember(member); // 변경 사항 저장
-        }
-
-        signInResultDto.setToken(accessTokenNew);
-        signInResultDto.setRefreshToken(refreshToken); // 최종 Refresh Token 설정
-
-        resultStatusService.setSuccess(signInResultDto);
-        signInResultDto.setDetailMessage("로그인 성공.");
-        log.info("[SignIn] SignInResultDto: {}", signInResultDto);
 
         return signInResultDto;
 
@@ -283,7 +261,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public SignInResultDto google_SignIn(String accessToken) {
+    public SignInResultDto google_SignIn(String accessToken,HttpServletRequest request) {
         GoogleResponseDto googleResponseDto = getGoogleInfo(accessToken);
 
         SignInResultDto signInResultDto = new SignInResultDto();
@@ -296,39 +274,18 @@ public class AuthServiceImpl implements AuthService {
         if (member == null) {
             member = memberService.createGoogleUser(googleResponseDto);
             member.setServiceRole("ROLE_USER");
-            authDao.saveMember(member);
-            addServiceRoleManager(member);
+            request.getSession().setAttribute("partialMember", member);
             resultStatusService.setSuccess(signInResultDto);
-            signInResultDto.setNewUser(true);
-            signInResultDto.setDetailMessage("회원가입 완료.");
+            signInResultDto.setToken(null);
+            signInResultDto.setRefreshToken(null);
+            signInResultDto.setDetailMessage("추가 정보 입력하세요.");
         } else {
             resultStatusService.setSuccess(signInResultDto);
             signInResultDto.setNewUser(false);
             signInResultDto.setDetailMessage("로그인 성공.");
+            generateAndSetTokens(member,signInResultDto);
         }
 
-
-        String accessTokenNew = jwtProvider.createToken(member.getEmail(), List.of("ROLE_USER"));
-
-        String existingRefreshToken = member.getRefreshToken(); // 기존 Refresh Token 가져오기
-        String refreshToken;
-
-        if (existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
-            // 기존 Refresh Token이 유효하면 그대로 사용
-            refreshToken = existingRefreshToken;
-        } else {
-            // 기존 Refresh Token이 없거나 만료되었으면 새로 발급
-            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
-            member.setRefreshToken(refreshToken); // 새로운 Refresh Token을 DB에 저장 (필요할 경우)
-            authDao.saveMember(member); // 변경 사항 저장
-        }
-
-        signInResultDto.setToken(accessTokenNew);
-        signInResultDto.setRefreshToken(refreshToken); // 최종 Refresh Token 설정
-
-        resultStatusService.setSuccess(signInResultDto);
-        signInResultDto.setDetailMessage("로그인 성공.");
-        log.info("[SignIn] SignInResultDto: {}", signInResultDto);
 
         return signInResultDto;
 
@@ -353,22 +310,41 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResultDto kakao_additionalInfo(AdditionalInfoDto additionalInfoDto , HttpServletRequest request) {
-        String info = jwtProvider.getUsername(request.getHeader("X-AUTH-TOKEN"));
-        Member member = memberRepository.getByEmail(info);
-        ResultDto resultDto = new ResultDto();
+    public SignInResultDto saveAdditionalInfo(AdditionalInfoDto additionalInfoDto , HttpServletRequest request) {
+        Member member = (Member) request.getSession().getAttribute("partialMember");
+        SignInResultDto signInResultDto = new SignInResultDto();
 
         if (member != null) {
             member.addAuthAdditionalInfo(additionalInfoDto); // 기존 User 객체를 전달하여 새로운 User 객체 생성
             authDao.saveMember(member);
-            resultStatusService.setSuccess(resultDto);
+            addServiceRoleManager(member);
+            generateAndSetTokens(member,signInResultDto);
+            signInResultDto.setNewUser(true);
+            signInResultDto.setDetailMessage("회원가입 완료");
+            resultStatusService.setSuccess(signInResultDto);
         } else {
-            resultStatusService.setFail(resultDto);
+            resultStatusService.setFail(signInResultDto);
         }
-        return resultDto;
+        return signInResultDto;
     }
 
+    private void generateAndSetTokens(Member member, SignInResultDto signInResultDto) {
+        String accessTokenNew = jwtProvider.createToken(member.getEmail(), List.of("ROLE_USER"));
+        String existingRefreshToken = member.getRefreshToken();
+        String refreshToken;
 
+        if (existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
+            refreshToken = existingRefreshToken;
+        } else {
+            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
+            member.setRefreshToken(refreshToken);
+            authDao.saveMember(member);
+        }
+
+        signInResultDto.setToken(accessTokenNew);
+        signInResultDto.setRefreshToken(refreshToken);
+        resultStatusService.setSuccess(signInResultDto);
+    }
     private SignInResultDto handleSignInFailure(SignInResultDto signInResultDto, String errorMessage) {
         resultStatusService.setFail(signInResultDto);
         signInResultDto.setDetailMessage(errorMessage);
@@ -381,7 +357,7 @@ public class AuthServiceImpl implements AuthService {
         serviceRole.setRole("Role_User");
         teamMemberDao.saveServiceRole(serviceRole);
     }
-    // 전화번호 변환 유틸리티 메서드 추가
+
     private String formatPhoneNumber(String rawPhoneNumber) {
         if (rawPhoneNumber == null || !rawPhoneNumber.startsWith("+82")) {
             return rawPhoneNumber; // 변환이 필요 없는 경우 원본 반환
@@ -392,4 +368,7 @@ public class AuthServiceImpl implements AuthService {
 
         return localPhoneNumber;
     }
+
+
+
 }
