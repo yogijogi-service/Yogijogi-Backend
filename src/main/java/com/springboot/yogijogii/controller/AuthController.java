@@ -81,22 +81,22 @@ public class AuthController {
     }
 
     @PostMapping("/kakao/signin")
-    public ResponseEntity<?> kakao_SignIn(@RequestParam String accessToken){
+    public ResponseEntity<?> kakao_SignIn(@RequestParam String accessToken,HttpServletRequest request){
         log.info("[kakao-login] accessToken {}", accessToken);
-        return ResponseEntity.status(HttpStatus.OK).body(authService.getKakaoUserInfo(accessToken));
+        return ResponseEntity.status(HttpStatus.OK).body(authService.getKakaoUserInfo(accessToken,request));
     }
 
     @PostMapping("/google/signin")
-    public ResponseEntity<?> google_SignIn(@RequestParam String accessToken){
+    public ResponseEntity<?> google_SignIn(@RequestParam String accessToken,HttpServletRequest request){
         log.info("[google-login] accessToken {}", accessToken);
-        return ResponseEntity.status(HttpStatus.OK).body(authService.getGoogleUserInfo(accessToken));
+        return ResponseEntity.status(HttpStatus.OK).body(authService.getGoogleUserInfo(accessToken,request));
     }
 
 
     @PutMapping("/add-info")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<ResultDto> kakao_additionalInfo(AdditionalInfoDto additionalInfoDto , HttpServletRequest request){
-        ResultDto resultDto = authService.kakao_additionalInfo(additionalInfoDto,request);
+        ResultDto resultDto = authService.saveAdditionalInfo(additionalInfoDto,request);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
     @PostMapping("/token/refresh")
