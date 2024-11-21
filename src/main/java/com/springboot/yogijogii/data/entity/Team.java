@@ -77,5 +77,8 @@ public class Team {
     @JsonIgnore
     private List<TeamMember> teamMembers;
 
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    private List<TeamStrategy> teamStrategyList;
+
 
 }

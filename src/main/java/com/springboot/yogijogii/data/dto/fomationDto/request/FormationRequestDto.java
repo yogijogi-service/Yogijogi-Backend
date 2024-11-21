@@ -1,9 +1,8 @@
-package com.springboot.yogijogii.data.dto.fomationDto;
+package com.springboot.yogijogii.data.dto.fomationDto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.util.List;
 

@@ -3,6 +3,7 @@ package com.springboot.yogijogii.data.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,5 +27,18 @@ public class TeamStrategy {
 
     @OneToOne
     private Formation formation;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teamId") // 매니저를 참조하는 외래 키
+    private Team team; // 매니저 정보 추가
+
+    public TeamStrategy(String opposingTeam, String matchAddress, String matchStrategy, LocalDateTime matchDayTime, Formation formation, Team team) {
+        this.opposingTeam = opposingTeam;
+        this.matchAddress = matchAddress;
+        this.matchStrategy = matchStrategy;
+        this.matchDayTime = matchDayTime;
+        this.formation = formation;
+        this.team = team;
+    }
 
 }

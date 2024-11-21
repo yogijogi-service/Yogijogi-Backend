@@ -1,8 +1,9 @@
 package com.springboot.yogijogii.controller;
 
 import com.springboot.yogijogii.data.dto.ResultDto;
-import com.springboot.yogijogii.data.dto.fomationDto.FormationRequestDto;
-import com.springboot.yogijogii.data.dto.fomationDto.Formation_detailRequestDto;
+import com.springboot.yogijogii.data.dto.fomationDto.response.FormationResponseDto;
+import com.springboot.yogijogii.data.dto.fomationDto.request.Formation_detailRequestDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
 import com.springboot.yogijogii.service.AdminTeamService;
 import com.springboot.yogijogii.service.FormationService;
@@ -35,9 +36,21 @@ public class TeamStrategyController {
 
     @PostMapping("/save/formation")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
-    public ResponseEntity<ResultDto> saveFormation(@RequestParam  String formationName ,@RequestBody List<Formation_detailRequestDto> formationDetailRequestDtos){
-        ResultDto resultDto = formationService.saveFormation(formationName,formationDetailRequestDtos);
+    public ResponseEntity<ResultDto> saveFormation(HttpServletRequest request,@RequestParam Long teamId,@RequestParam  String formationName ,@RequestBody List<Formation_detailRequestDto> formationDetailRequestDtos){
+        ResultDto resultDto = formationService.saveFormation(request,teamId,formationName,formationDetailRequestDtos);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 
+    @GetMapping("/get/formation")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<FormationResponseDto> getFormation(HttpServletRequest request, @RequestParam Long teamId , @RequestParam  Long formationId){
+        FormationResponseDto formationResponseDto = formationService.getFormation(request,teamId,formationId);
+        return ResponseEntity.status(HttpStatus.OK).body(formationResponseDto);
+    }
+    @PostMapping("/save/team-strategy")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<ResultDto> saveMatchStrategy(HttpServletRequest request,@RequestBody MatchStrategyDto matchStrategyDto){
+        ResultDto resultDto = adminTeamService.saveMatchStrategy(request,matchStrategyDto);
+        return ResponseEntity.status(HttpStatus.OK).body(resultDto);
+    }
 }

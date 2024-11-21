@@ -1,15 +1,14 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.data.dao.MemberDao;
-import com.springboot.yogijogii.data.dao.TeamDao;
-import com.springboot.yogijogii.data.dao.TeamMemberDao;
+import com.springboot.yogijogii.data.dao.*;
 import com.springboot.yogijogii.data.dto.ResultDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
-import com.springboot.yogijogii.data.entity.Member;
-import com.springboot.yogijogii.data.entity.Team;
-import com.springboot.yogijogii.data.entity.TeamMember;
+import com.springboot.yogijogii.data.entity.*;
+import com.springboot.yogijogii.dateConverter.DateTimeConverter;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.AdminTeamService;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.protocol.HTTP;
@@ -17,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,11 @@ import java.util.stream.Collectors;
 public class AdminTeamServiceImpl implements AdminTeamService {
     private final JwtAuthenticationService jwtAuthenticationService;
     private final TeamMemberDao teamMemberDao;
+    private final TeamStrategyDao teamStrategyDao;
+    private final ResultStatusService resultStatusService;
+    private final FormationDao formationDao;
     private final TeamDao teamDao;
+    private final DateTimeConverter dateTimeConverter;
 
     @Override
     public ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant) {
@@ -81,7 +85,42 @@ public class AdminTeamServiceImpl implements AdminTeamService {
 
         return teamMemberByPositionDtoList;
     }
+    @Override
+    public ResultDto saveMatchStrategy(HttpServletRequest request, MatchStrategyDto matchStrategyDto) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        ResultDto resultDto = new ResultDto();
 
+        Long userId = member.getMemberId();
+        Long teamId = matchStrategyDto.getTeamId();
+
+        // 매니저 권한 확인
+        boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if (!isManager) {
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+
+        // Formation 및 Team 가져오기
+        Formation formation = formationDao.findById(matchStrategyDto.getFormationId());
+        Team team = teamDao.findByTeamId(matchStrategyDto.getTeamId());
+        LocalDateTime matchTime = dateTimeConverter.convertToDateTime(matchStrategyDto.getMatchTime());
+
+        // TeamStrategy 생성 및 저장
+        TeamStrategy teamStrategy = new TeamStrategy(
+                matchStrategyDto.getOpposingTeam(),
+                matchStrategyDto.getAddress(),
+                matchStrategyDto.getMatchStrategy(),
+                matchTime,
+                formation,
+                team
+        );
+
+        teamStrategyDao.saveMatchStrategy(teamStrategy); // 저장 로직
+
+        resultDto.setDetailMessage("경기 전략 저장");
+        resultStatusService.setSuccess(resultDto);
+
+        return resultDto;
+    }
     @Override
     public ResultDto grantMangerRole(HttpServletRequest servletRequest, Long teamMemberId) {
         Member member = jwtAuthenticationService.authenticationToken(servletRequest);

@@ -7,6 +7,7 @@ import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.dto.ResultDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.TeamMember;
@@ -137,5 +138,6 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
                         .build())
                 .collect(Collectors.toList());
     }
+
 
 }
