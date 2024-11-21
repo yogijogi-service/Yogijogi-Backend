@@ -1,5 +1,6 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.s3.S3Uploader;
 import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,7 @@ public class TeamServiceImpl implements TeamService {
     private final TeamDao teamDao;
     private final MemberDao memberDao;
     private final TeamMemberDao teamMemberDao;
+    private final JwtAuthenticationService jwtAuthenticationService;
 
     @Override
     public ResultDto createTeam(CreateTeamRquestDto createTeamRquestDto, MultipartFile image,HttpServletRequest request) throws IOException{
@@ -79,6 +82,8 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamResponseDto getTeam(HttpServletRequest servletRequest, Long teamId) {
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
+        log.info("[memberName] : {}",member.getName());
         Team team = teamDao.findByTeamId(teamId);
         TeamResponseDto teamResponseDto = new TeamResponseDto();
         teamResponseDto.setTeamName(team.getTeamName());
