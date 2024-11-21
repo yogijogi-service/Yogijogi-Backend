@@ -45,6 +45,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
 
                 .and()
                 .authorizeRequests() // 리퀘스트에 대한 사용권한 체크
+                .antMatchers(HttpMethod.OPTIONS, "/**/*").permitAll()
                 .antMatchers("/api/sign/**",
                         "/sign/exception","/main-api/**","/auth/**").permitAll() // 가입 및 로그인 주소는 허용
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll() // 프리플라이트 요청를 허용
