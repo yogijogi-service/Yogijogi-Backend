@@ -12,6 +12,7 @@ import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.JoinTeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
     private final JoinTeamDao joinTeamDao;
     private final TeamMemberDao teamMemberDao;
     private final JwtAuthenticationService jwtAuthenticationService;
+    private final ResultStatusService resultStatusService;
 
     @Override
     public ResultDto joinTeam(HttpServletRequest servletRequest, JoinTeamDto requestDto, Long teamId) {
@@ -58,28 +60,27 @@ public class JoinTeamServiceImpl implements JoinTeamService {
                 return resultDto;
             }
 
-            JoinTeam joinTeam = new JoinTeam();
-            joinTeam.setTeam(team);
-            joinTeam.setMember(member);
-            joinTeam.setName(requestDto.getName());
-            joinTeam.setAddress(requestDto.getAddress());
-            joinTeam.setGender(requestDto.getGender());
-            joinTeam.setLevel(requestDto.getLevel());
-            joinTeam.setHasExperience(requestDto.isHasExperience());
-            joinTeam.setJoinReason(requestDto.getJoinReason());
-            joinTeam.setPosition(requestDto.getPosition());
-            joinTeam.setStatus("PENDING");
-            joinTeam.setCreatedDate(LocalDateTime.now());
-            joinTeam.setUpdatedDate(LocalDateTime.now());
+            JoinTeam joinTeam = JoinTeam.builder()
+                    .team(team)
+                    .member(member)
+                    .name(requestDto.getName())
+                    .address(requestDto.getAddress())
+                    .gender(requestDto.getGender())
+                    .level(requestDto.getLevel())
+                    .hasExperience(requestDto.isHasExperience())
+                    .joinReason(requestDto.getJoinReason())
+                    .position(requestDto.getPosition())
+                    .status("PENDING")
+                    .createdDate(LocalDateTime.now())
+                    .updatedDate(LocalDateTime.now())
+                    .build();
             
             joinTeamDao.save(joinTeam);
-            resultDto.setSuccess(true);
-            resultDto.setCode(HttpStatus.OK.value());
-            resultDto.setMsg("팀 가입요청을 성공하였습니다.");
+            resultStatusService.setSuccess(resultDto);
+            resultDto.setDetailMessage("팀 가입요청을 성공하였습니다.");
         } catch (Exception e) {
-            resultDto.setSuccess(false);
-            resultDto.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultDto.setMsg("팀 가입 요청 실패: " + e.getMessage());
+            resultStatusService.setSuccess(resultDto);
+            resultDto.setDetailMessage("팀 가입 요청 실패: " + e.getMessage());
         }
         return resultDto;
     }
@@ -89,9 +90,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
         ResultDto resultDto = new ResultDto();
 
         try {
-            String token = jwtProvider.resolveToken(servletRequest);
-            String email = jwtProvider.getUsername(token);
-            Member member = memberDao.findMemberByEmail(email);
+            Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
             Team team = teamDao.findByInviteCode(inviteCode);
             boolean isAlreadyMember = teamMemberDao.existsByMemberAndTeam(member, team);
@@ -111,11 +110,11 @@ public class JoinTeamServiceImpl implements JoinTeamService {
                     .teamColor("#000000")
                     .createdDate(LocalDateTime.now())
                     .build());
-            resultDto.setSuccess(true);
-            resultDto.setMsg("초대코드로 팀가입에 성공하였습니다.");
+            resultStatusService.setSuccess(resultDto);
+            resultDto.setDetailMessage("초대코드로 팀가입에 성공하였습니다.");
         } catch (Exception e) {
-            resultDto.setSuccess(false);
-            resultDto.setMsg("초대코드로 팀가입에 실패하였습니다: " + e.getMessage());
+            resultStatusService.setFail(resultDto);
+            resultDto.setDetailMessage("초대코드로 팀가입에 실패하였습니다: " + e.getMessage());
         }
         return resultDto;
     }

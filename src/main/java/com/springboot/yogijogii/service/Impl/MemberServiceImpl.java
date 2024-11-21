@@ -12,7 +12,9 @@ import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.MemberAgreement;
 import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
+import com.springboot.yogijogii.jwt.JwtAuthenticationService;
 import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,8 +28,9 @@ import java.time.LocalDateTime;
 public class MemberServiceImpl implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
-    private final JwtProvider jwtProvider;
     private final MemberDao memberDao;
+    private final JwtAuthenticationService jwtAuthenticationService;
+    private final ResultStatusService resultStatusService;
 
     @Override
     public  Member createKakaoUser(KakaoResponseDto kakaoUserInfoResponse) {
@@ -102,50 +105,49 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponseDto getUser(HttpServletRequest servletRequest) {
-        String token = jwtProvider.resolveToken(servletRequest);
-        String email = jwtProvider.getUsername(token);
-        Member member = memberDao.findMemberByEmail(email);
-
-        MemberResponseDto memberResponseDto = new MemberResponseDto();
-        if(jwtProvider.validToken(token)){
-            memberResponseDto.setMemberId(member.getMemberId());
-            memberResponseDto.setAddress(member.getAddress());
-            memberResponseDto.setBirthDate(member.getBirthDate());
-            memberResponseDto.setGender(member.getGender());
-            memberResponseDto.setEmail(member.getEmail());
-            memberResponseDto.setLevel(member.getLevel());
-            memberResponseDto.setHasExperience(member.isHasExperience());
-            memberResponseDto.setLoginMethod(member.getLoginMethod());
-            memberResponseDto.setName(member.getName());
-            memberResponseDto.setPhoneNum(member.getPhoneNum());
-            memberResponseDto.setProfileUrl(member.getProfileUrl());
-            memberResponseDto.setCreate_At(String.valueOf(member.getCreate_At()));
-            memberResponseDto.setUpdate_At(String.valueOf(member.getUpdate_At()));
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
+        if(member != null){
+            MemberResponseDto memberResponseDto = MemberResponseDto.builder()
+                    .memberId(member.getMemberId())
+                    .address(member.getAddress())
+                    .birthDate(member.getBirthDate())
+                    .gender(member.getGender())
+                    .email(member.getEmail())
+                    .level(member.getLevel())
+                    .hasExperience(member.isHasExperience())
+                    .loginMethod(member.getLoginMethod())
+                    .name(member.getName())
+                    .phoneNum(member.getPhoneNum())
+                    .profileUrl(member.getProfileUrl())
+                    .create_At(String.valueOf(member.getCreate_At()))
+                    .update_At(String.valueOf(member.getUpdate_At()))
+                    .build();
+            return memberResponseDto;
         }
-        return memberResponseDto;
+        return null;
     }
 
     @Override
     public ResultDto updateUser(HttpServletRequest servletRequest, MemberRequestDto requestDto) {
-        String token = jwtProvider.resolveToken(servletRequest);
-        String email = jwtProvider.getUsername(token);
-        Member member = memberDao.findMemberByEmail(email);
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
         ResultDto resultDto = new ResultDto();
         if(requestDto.getPassword().equals(requestDto.getPasswordCheck())){
-            if(jwtProvider.validToken(token)){
-                member.setPhoneNum(requestDto.getPhoneNum());
-                member.setEmail(requestDto.getEmail());
-                member.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-                member.setPasswordCheck(passwordEncoder.encode(requestDto.getPasswordCheck()));
-                member.setBirthDate(requestDto.getBirtDate());
-                member.setGender(requestDto.getGender());
+            if(member!=null){
+                member.builder()
+                        .phoneNum(requestDto.getPhoneNum())
+                        .email(requestDto.getEmail())
+                        .password(passwordEncoder.encode(requestDto.getPassword()))
+                        .passwordCheck(passwordEncoder.encode(requestDto.getPasswordCheck()))
+                        .birthDate(requestDto.getBirtDate())
+                        .gender(requestDto.getGender())
+                        .build();
                 memberDao.save(member);
-                resultDto.setSuccess(true);
-                resultDto.setMsg("프로필 수정을 완료하였습니다.");
+                resultStatusService.setSuccess(resultDto);
+                resultDto.setDetailMessage("프로필 수정을 완료하였습니다.");
             }
         }else {
-            resultDto.setSuccess(false);
-            resultDto.setMsg("비밀번호가 일치하지 않습니다.");
+            resultStatusService.setFail(resultDto);
+            resultDto.setDetailMessage("비밀번호가 일치하지 않습니다.");
         }
         return resultDto;
     }

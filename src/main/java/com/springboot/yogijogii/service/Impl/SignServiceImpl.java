@@ -10,6 +10,7 @@ import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.*;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.MemberService;
 import com.springboot.yogijogii.service.SignService;
 import com.springboot.yogijogii.service.SmsService;
@@ -34,6 +35,7 @@ public class SignServiceImpl implements SignService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final TeamMemberDao teamMemberDao;
+    private final ResultStatusService resultStatusService;
 
     @Override
     public ResultDto SignUpSmsVerify(String certificationNumber, HttpServletRequest request) {
@@ -142,10 +144,14 @@ public class SignServiceImpl implements SignService {
 
     @Override
     public ResultDto checkEmail(String email) {
+        ResultDto resultDto = new ResultDto();
         if(memberRepository.existsByEmail(email)) {
-            throw new RuntimeException("이미 존재하는 이메일 입니다.");
+            resultStatusService.setFail(resultDto);
+            resultDto.setDetailMessage("이미 존재하는 이메일 입니다.");
+        }else{
+            resultStatusService.setSuccess(resultDto);
+            resultDto.setDetailMessage("사용가능한 이메일 입니다.");
         }
-        ResultDto resultDto = new ResultDto(true, HttpStatus.OK.value(), "사용가능한 이메일 입니다.", "");
         return resultDto;
     }
 
