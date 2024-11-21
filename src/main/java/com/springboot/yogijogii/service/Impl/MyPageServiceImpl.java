@@ -11,6 +11,7 @@ import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.entity.*;
 import com.springboot.yogijogii.data.repository.teamMember.TeamMemberRepository;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final TeamDao teamDao;
     private final JoinTeamDao joinTeamDao;
     private final LeaveTeamDao leaveTeamDao;
+    private final ResultStatusService resultStatusService;
 
 
     @Override
@@ -66,8 +68,9 @@ public class MyPageServiceImpl implements MyPageService {
         teamMember.setTeamColor(requestDto.getTeamColor());
 
         teamMemberDao.save(teamMember);
-        resultDto.setSuccess(true);
-        resultDto.setMsg("팀 정보수정을 완료하였습니다.");
+
+        resultStatusService.setSuccess(resultDto);
+        resultDto.setDetailMessage("팀 정보수정을 완료하였습니다.");
         return resultDto;
     }
 
@@ -76,8 +79,6 @@ public class MyPageServiceImpl implements MyPageService {
         Member member = jwtAuthenticationService.authenticationToken(servletRequest);
 
         List<JoinTeam> joinRequests = joinTeamDao.findByMember(member);
-        System.out.println("Join Requests: " + joinRequests); // 출력해서 값 확인
-
         return joinRequests.stream().map(joinRequest ->
                 new JoinTeamStatusDto(
                         joinRequest.getTeam().getTeamName(),
@@ -107,8 +108,8 @@ public class MyPageServiceImpl implements MyPageService {
                 .build();
         leaveTeamDao.save(leaveTeam);
         teamMemberDao.delete(teamMember);
-        ResultDto resultDto=new ResultDto();
-        resultDto.setSuccess(true);
+        ResultDto resultDto = new ResultDto();
+        resultStatusService.setSuccess(resultDto);
         resultDto.setMsg("팀 탈퇴를 성공하였습니다.");
         return resultDto;
     }

@@ -64,7 +64,6 @@ public class SearchTeamImpl implements SearchTeam {
         Team team = teamRepository.findByInviteCode(inviteCode);
 
         if (team == null) {
-            // 팀이 없을 경우 예외 처리 (원하는 방식으로 처리)
             log.error("팀을 찾을 수 없습니다. inviteCode: {}", inviteCode);
             throw new IllegalArgumentException("해당 초대 코드로 팀을 찾을 수 없습니다.");
         }

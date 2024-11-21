@@ -1,10 +1,10 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.s3.S3Uploader;
 import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;
-import com.springboot.yogijogii.data.dto.CommonResponse;
 import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamDto.CreateTeamRquestDto;
 import com.springboot.yogijogii.data.dto.teamDto.TeamMemberListDto;
@@ -39,6 +39,7 @@ public class TeamServiceImpl implements TeamService {
     private final TeamDao teamDao;
     private final MemberDao memberDao;
     private final TeamMemberDao teamMemberDao;
+    private final ResultStatusService resultStatusService;
 
     @Override
     public ResultDto createTeam(CreateTeamRquestDto createTeamRquestDto, MultipartFile image,HttpServletRequest request) throws IOException{
@@ -47,7 +48,7 @@ public class TeamServiceImpl implements TeamService {
             ResultDto resultDto = new ResultDto();
             resultDto.setDetailMessage("토큰이 요청에 포함되지 않았습니다.");
             log.warn("[createTeam] 토큰이 요청에 포함되지 않았습니다.");
-            setFail(resultDto);
+            resultStatusService.setFail(resultDto);
         }
 
         String info = jwtProvider.getUsername(token);
@@ -55,7 +56,7 @@ public class TeamServiceImpl implements TeamService {
             ResultDto resultDto = new ResultDto();
             resultDto.setDetailMessage("유효하지 않은 토큰입니다.");
             log.warn("[createTeam] 유효하지 않은 토큰입니다.");
-            setFail(resultDto);
+            resultStatusService.setFail(resultDto);
      }
         Member member = memberRepository.getByEmail(info);
         ResultDto resultDto = new ResultDto();
@@ -68,33 +69,33 @@ public class TeamServiceImpl implements TeamService {
             memberDao.save(member);
 
             resultDto.setDetailMessage("팀 생성 완료.");
-            setSuccess(resultDto);
+            resultStatusService.setSuccess(resultDto);
         }else{
             resultDto.setDetailMessage("팀 생성 실패.");
-            setFail(resultDto);
+            resultStatusService.setFail(resultDto);
         }
-
         return resultDto;
     }
 
     @Override
     public TeamResponseDto getTeam(HttpServletRequest servletRequest, Long teamId) {
         Team team = teamDao.findByTeamId(teamId);
-        TeamResponseDto teamResponseDto = new TeamResponseDto();
-        teamResponseDto.setTeamName(team.getTeamName());
-        teamResponseDto.setTeamImageUrl(team.getTeamImageUrl());
-        teamResponseDto.setInviteCode(team.getInviteCode());
-        teamResponseDto.setTeam_introduce(team.getTeam_introduce());
-        teamResponseDto.setRegion(team.getRegion());
-        teamResponseDto.setTown(team.getTown());
-        teamResponseDto.setMatchLocation(team.getMatchLocation());
-        teamResponseDto.setDues(team.getDues());
-        teamResponseDto.setTeamGender(teamResponseDto.getTeamGender());
-        teamResponseDto.setAgeRange(team.getAgeRange());
-        teamResponseDto.setTeamLevel(team.getTeamLevel());
-        teamResponseDto.setActivityDays(team.getActivityDays());
-        teamResponseDto.setActivityTime(team.getActivityTime());
-        teamResponseDto.setPositionRequired(team.getPositionRequired());
+        TeamResponseDto teamResponseDto = TeamResponseDto.builder()
+                .teamName(team.getTeamName())
+                .teamImageUrl(team.getTeamImageUrl())
+                .inviteCode(team.getInviteCode())
+                .team_introduce(team.getTeam_introduce())
+                .region(team.getRegion())
+                .town(team.getTown())
+                .matchLocation(team.getMatchLocation())
+                .dues(team.getDues())
+                .teamGender(team.getTeamGender())
+                .ageRange(team.getAgeRange())
+                .teamLevel(team.getTeamLevel())
+                .activityDays(team.getActivityDays())
+                .activityTime(team.getActivityTime())
+                .positionRequired(team.getPositionRequired())
+                .build();
         return teamResponseDto;
     }
 
@@ -173,15 +174,5 @@ public class TeamServiceImpl implements TeamService {
         teamMember.setRole("ROLE_MANAGER");
         member.getTeamMembers().add(teamMember);
         teamMemberDao.saveTeamMember(teamMember);
-    }
-    private void setSuccess(ResultDto resultDto){
-        resultDto.setSuccess(true);
-        resultDto.setCode(CommonResponse.SUCCESS.getCode());
-        resultDto.setMsg(CommonResponse.SUCCESS.getMsg());
-    }
-    private void setFail(ResultDto resultDto){
-        resultDto.setSuccess(false);
-        resultDto.setCode(CommonResponse.Fail.getCode());
-        resultDto.setMsg(CommonResponse.Fail.getMsg());
     }
 }

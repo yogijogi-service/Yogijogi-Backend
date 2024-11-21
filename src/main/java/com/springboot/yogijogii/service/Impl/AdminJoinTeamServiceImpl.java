@@ -7,12 +7,12 @@ import com.springboot.yogijogii.data.dao.TeamDao;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamListResponseDto;
 import com.springboot.yogijogii.data.dto.joinTeamDto.JoinTeamResponseDto;
 import com.springboot.yogijogii.data.dto.ResultDto;
-import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
 import com.springboot.yogijogii.data.entity.JoinTeam;
 import com.springboot.yogijogii.data.entity.Member;
 import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.entity.Team;
-import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.jwt.JwtAuthenticationService;
+import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.AdminJoinTeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
-    private final JwtProvider jwtProvider;
+    private final JwtAuthenticationService jwtAuthenticationService;
+    private final ResultStatusService resultStatusService;
     private final MemberDao memberDao;
     private final TeamDao teamDao;
     private final JoinTeamDao joinTeamDao;
@@ -33,10 +34,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
 
     @Override
     public ResultDto processJoinRequest(HttpServletRequest servletRequest, Long teamId, Long memberId, boolean accept) throws Exception {
-        String token = jwtProvider.resolveToken(servletRequest);
-        String email = jwtProvider.getUsername(token);
-        Member loggedInMember = memberDao.findMemberByEmail(email);
-
+        Member loggedInMember = jwtAuthenticationService.authenticationToken(servletRequest);
         ResultDto resultDto = new ResultDto();
 
         // 요청된 팀 정보 조회
@@ -64,22 +62,21 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
             // 가입 요청 삭제 대신 Status 변경
             joinRequest.setStatus("ACCEPT");
             // 팀 가입 수락: Role_Member로 추가
-            TeamMember teamMember = new TeamMember();
-            teamMember.setMember(requestedMember);
-            teamMember.setTeam(team);
-            teamMember.setRole("ROLE_MEMBER");
-            teamMember.setPosition(joinRequest.getPosition());
-            teamMember.setTeamColor("#00000");
-            teamMember.setCreatedDate(LocalDateTime.now());
+            TeamMember teamMember = TeamMember.builder()
+                    .member(requestedMember)
+                    .team(team)
+                    .role("ROLE_MEMBER")
+                    .position(joinRequest.getPosition())
+                    .teamColor("#000000")
+                    .createdDate(LocalDateTime.now())
+                    .build();
             teamMemberDao.saveTeamMember(teamMember);
-
-            resultDto.setMsg("팀가입 요청을 승인하였습니다.");
-            resultDto.setSuccess(true);
+            resultStatusService.setSuccess(resultDto);
+            resultDto.setDetailMessage("팀가입 요청을 승인하였습니다.");
         } else {
             joinRequest.setStatus("REJECT");
-
-            resultDto.setMsg("팀가입 요청을 거절하였습니다.");
-            resultDto.setSuccess(false);
+            resultStatusService.setFail(resultDto);
+            resultDto.setDetailMessage("팀가입 요청을 거절하였습니다.");
         }
         joinRequest.setUpdatedDate(LocalDateTime.now());
         // Status 저장
@@ -89,31 +86,26 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
 
     @Override
     public JoinTeamResponseDto requestDetail(HttpServletRequest servletRequest, Long joinTeamId) {
-        JoinTeamResponseDto joinTeamResponseDto = new JoinTeamResponseDto();
-        try {
-            String token = jwtProvider.resolveToken(servletRequest);
-            String email = jwtProvider.getUsername(token);
-            Member member = memberDao.findMemberByEmail(email);
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
+        JoinTeam joinTeam = joinTeamDao.findByJoinTeamId(joinTeamId);
 
-            JoinTeam joinTeam = joinTeamDao.findByJoinTeamId(joinTeamId);
-
-            boolean isManager = teamMemberDao.existsByMemberAndTeamAndRole(member, joinTeam.getTeam(), "Role_Manager");
-            if (!isManager) {
-                throw new IllegalAccessError("해당 팀을 관리할 권한이 없습니다.");
-            }
-            joinTeamResponseDto.setName(joinTeam.getName());
-            joinTeamResponseDto.setGender(joinTeam.getGender());
-            joinTeamResponseDto.setAddress(joinTeam.getAddress());
-            joinTeamResponseDto.setLevel(joinTeam.getLevel());
-            joinTeamResponseDto.setHasExperience(joinTeam.isHasExperience());
-            joinTeamResponseDto.setPosition(joinTeam.getPosition());
-            joinTeamResponseDto.setJoinReason(joinTeam.getJoinReason());
-            joinTeamResponseDto.setMemberId(joinTeam.getMember().getMemberId());
-            joinTeamResponseDto.setTeamId(joinTeam.getTeam().getTeamId());
-            joinTeamResponseDto.setProfileUrl(joinTeam.getMember().getProfileUrl());
-        } catch (IllegalAccessError e) {
-            throw new SecurityException("권한이 없습니다: " + e.getMessage());
+        boolean isManager = teamMemberDao.existsByMemberAndTeamAndRole(member, joinTeam.getTeam(), "Role_Manager");
+        if (!isManager) {
+            throw new IllegalAccessError("해당 팀을 관리할 권한이 없습니다.");
         }
+
+        JoinTeamResponseDto joinTeamResponseDto = JoinTeamResponseDto.builder()
+                .name(joinTeam.getName())
+                .gender(joinTeam.getGender())
+                .address(joinTeam.getAddress())
+                .level(joinTeam.getLevel())
+                .hasExperience(joinTeam.isHasExperience())
+                .position(joinTeam.getPosition())
+                .joinReason(joinTeam.getJoinReason())
+                .memberId(joinTeam.getMember().getMemberId())
+                .teamId(joinTeam.getTeam().getTeamId())
+                .profileUrl(joinTeam.getMember().getProfileUrl())
+                .build();
         return joinTeamResponseDto;
     }
 
@@ -138,6 +130,4 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
                         .build())
                 .collect(Collectors.toList());
     }
-
-
 }
