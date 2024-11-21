@@ -1,6 +1,6 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.S3.S3Uploader;
+import com.springboot.yogijogii.s3.S3Uploader;
 import com.springboot.yogijogii.data.dao.MemberDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
 import com.springboot.yogijogii.data.dao.TeamDao;

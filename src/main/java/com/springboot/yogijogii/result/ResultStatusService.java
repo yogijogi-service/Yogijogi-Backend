@@ -1,4 +1,4 @@
-package com.springboot.yogijogii.Result;
+package com.springboot.yogijogii.result;
 
 
 import com.springboot.yogijogii.data.dto.CommonResponse;

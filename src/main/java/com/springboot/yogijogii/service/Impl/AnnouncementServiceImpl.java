@@ -1,7 +1,7 @@
 package com.springboot.yogijogii.service.Impl;
 
-import com.springboot.yogijogii.Result.ResultStatusService;
-import com.springboot.yogijogii.S3.S3Uploader;
+import com.springboot.yogijogii.result.ResultStatusService;
+import com.springboot.yogijogii.s3.S3Uploader;
 import com.springboot.yogijogii.data.dao.AnnouncementDao;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementRequestDto;
 import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementResponseDto;
