@@ -8,6 +8,7 @@ import com.springboot.yogijogii.jwt.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,6 +45,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
 
                 .and()
                 .authorizeRequests() // 리퀘스트에 대한 사용권한 체크
+                .antMatchers(HttpMethod.OPTIONS, "/**/*").permitAll()
                 .antMatchers("/api/sign/**",
                         "/sign/exception","/main-api/**","/auth/**").permitAll() // 가입 및 로그인 주소는 허용
                 .antMatchers("/api/team/**","api/search/**").authenticated()
