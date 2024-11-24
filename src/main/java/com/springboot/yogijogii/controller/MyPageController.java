@@ -29,9 +29,9 @@ public class MyPageController {
         return ResponseEntity.status(HttpStatus.OK).body(myPageTeamResponseDtos);
     }
 
-    @PutMapping("/favoriteTeam")
+    @PutMapping("/favoriteTeam/{teamId}")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "사용자 인증 Token", required = true, dataType = "String", paramType = "header")
-    public ResponseEntity<ResultDto> checkFavoriteTeam(HttpServletRequest servletRequest, Long teamId) {
+    public ResponseEntity<ResultDto> checkFavoriteTeam(HttpServletRequest servletRequest,@PathVariable Long teamId) {
         ResultDto resultDto = myPageService.checkFavoriteTeam(servletRequest, teamId);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
