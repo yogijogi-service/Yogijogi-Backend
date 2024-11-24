@@ -17,4 +17,6 @@ public class MyPageTeamResponseDto {
     private String teamImageUrl;
 
     private String teamName;
+
+    private Boolean favoriteTeam;
 }

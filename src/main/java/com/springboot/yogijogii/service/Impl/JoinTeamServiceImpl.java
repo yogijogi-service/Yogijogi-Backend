@@ -108,6 +108,7 @@ public class JoinTeamServiceImpl implements JoinTeamService {
                     .role("ROLE_MEMBER")
                     .position(position)
                     .teamColor("#000000")
+                    .favoriteTeam(false)
                     .createdDate(LocalDateTime.now())
                     .build());
             resultStatusService.setSuccess(resultDto);

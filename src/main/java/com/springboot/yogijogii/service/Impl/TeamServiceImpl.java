@@ -172,6 +172,8 @@ public class TeamServiceImpl implements TeamService {
         teamMember.setMember(member);
         teamMember.setTeam(team);
         teamMember.setRole("ROLE_MANAGER");
+        teamMember.setTeamColor("#000000");
+        teamMember.setFavoriteTeam(false);
         member.getTeamMembers().add(teamMember);
         teamMemberDao.saveTeamMember(teamMember);
     }

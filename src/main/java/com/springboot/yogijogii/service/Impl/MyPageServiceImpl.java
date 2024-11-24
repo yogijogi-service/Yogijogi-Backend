@@ -45,15 +45,35 @@ public class MyPageServiceImpl implements MyPageService {
         }
 
         return teamMembers.stream()
-                .filter(teamMember -> teamMember.getTeam()!=null)
+                .filter(teamMember -> teamMember.getTeam() != null)
                 .map(teamMember -> new MyPageTeamResponseDto(
                         teamMember.getTeam().getTeamId(),
                         teamMember.getPosition(),
                         teamMember.getTeamColor(),
                         teamMember.getTeam().getTeamImageUrl(),
-                        teamMember.getTeam().getTeamName()
+                        teamMember.getTeam().getTeamName(),
+                        teamMember.getFavoriteTeam()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ResultDto checkFavoriteTeam(HttpServletRequest servletRequest, Long teamId) {
+        ResultDto resultDto = new ResultDto();
+
+        Member member = jwtAuthenticationService.authenticationToken(servletRequest);
+        Team team = teamDao.findByTeamId(teamId);
+        TeamMember teamMember = teamMemberDao.findByMemberAndTeam(member, team);
+        if (teamMember.getFavoriteTeam()){
+            teamMember.setFavoriteTeam(false);
+            resultDto.setDetailMessage("즐겨찾기를 취소하였습니다.");
+        } else {
+            teamMember.setFavoriteTeam(true);
+            resultDto.setDetailMessage("즐겨찾기를 하였습니다.");
+        }
+        teamMemberDao.save(teamMember);
+        resultStatusService.setSuccess(resultDto);
+        return resultDto;
     }
 
     @Override
@@ -113,4 +133,5 @@ public class MyPageServiceImpl implements MyPageService {
         resultDto.setMsg("팀 탈퇴를 성공하였습니다.");
         return resultDto;
     }
+
 }

@@ -68,6 +68,7 @@ public class AdminJoinTeamServiceImpl implements AdminJoinTeamService {
                     .role("ROLE_MEMBER")
                     .position(joinRequest.getPosition())
                     .teamColor("#000000")
+                    .favoriteTeam(false)
                     .createdDate(LocalDateTime.now())
                     .build();
             teamMemberDao.saveTeamMember(teamMember);
