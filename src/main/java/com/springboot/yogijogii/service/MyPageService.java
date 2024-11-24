@@ -16,4 +16,6 @@ public interface MyPageService {
     List<JoinTeamStatusDto> getJoinRequests(HttpServletRequest servletRequest);
 
     ResultDto leaveTeam(HttpServletRequest servletRequest, Long teamId, String reason);
+
+    ResultDto checkFavoriteTeam(HttpServletRequest servletRequest, Long teamId);
 }

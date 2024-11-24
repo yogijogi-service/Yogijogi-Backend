@@ -31,5 +31,7 @@ public class TeamMember {
 
     private String teamColor;
 
+    private Boolean favoriteTeam;
+
     private LocalDateTime createdDate;
 }
