@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +24,11 @@ public class TeamStrategy {
 
     private String matchStrategy;
 
-    private LocalDateTime matchDayTime;
+    private String matchStartTime;
+
+    private String matchEndTime;
+
+    private LocalDate matchDay;
 
     @OneToOne
     private Formation formation;
@@ -32,11 +37,13 @@ public class TeamStrategy {
     @JoinColumn(name = "teamId") // 매니저를 참조하는 외래 키
     private Team team; // 매니저 정보 추가
 
-    public TeamStrategy(String opposingTeam, String matchAddress, String matchStrategy, LocalDateTime matchDayTime, Formation formation, Team team) {
+    public TeamStrategy(String opposingTeam, String matchAddress, String matchStrategy, LocalDate matchDay, String matchStartTime,String matchEndTime ,Formation formation, Team team) {
         this.opposingTeam = opposingTeam;
         this.matchAddress = matchAddress;
         this.matchStrategy = matchStrategy;
-        this.matchDayTime = matchDayTime;
+        this.matchDay = matchDay;
+        this.matchStartTime = matchStartTime;
+        this.matchEndTime = matchEndTime;
         this.formation = formation;
         this.team = team;
     }

@@ -54,7 +54,6 @@ public class Team {
     @Column(nullable = false)
     private String ageRange;
 
-
     private String inviteCode;
 
     private String teamLevel;
@@ -80,5 +79,7 @@ public class Team {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<TeamStrategy> teamStrategyList;
 
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    private List<Formation> formationList;
 
 }

@@ -15,8 +15,6 @@ public class FormationDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String position;
-
     private double x; // x 좌표 (예: 52.52734375)
     private double y; // y 좌표 (예: 369.73828125)
 
