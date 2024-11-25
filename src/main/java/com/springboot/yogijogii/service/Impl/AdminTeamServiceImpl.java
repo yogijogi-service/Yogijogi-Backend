@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AdminTeamServiceImpl implements AdminTeamService {
     private final ResultStatusService resultStatusService;
     private final FormationDao formationDao;
     private final TeamDao teamDao;
-    private final DateTimeConverter dateTimeConverter;
+//    private final DateTimeConverter dateTimeConverter;
 
     @Override
     public ResultDto updateSubManagerRole(HttpServletRequest servletRequest, Long teamMemberId, boolean grant) {
@@ -124,14 +125,15 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         // Formation 및 Team 가져오기
         Formation formation = formationDao.findById(matchStrategyDto.getFormationId());
         Team team = teamDao.findByTeamId(matchStrategyDto.getTeamId());
-        LocalDateTime matchTime = dateTimeConverter.convertToDateTime(matchStrategyDto.getMatchTime());
 
         // TeamStrategy 생성 및 저장
         TeamStrategy teamStrategy = new TeamStrategy(
                 matchStrategyDto.getOpposingTeam(),
                 matchStrategyDto.getAddress(),
                 matchStrategyDto.getMatchStrategy(),
-                matchTime,
+                matchStrategyDto.getMatchDay(),
+                matchStrategyDto.getMatchStartTime(),
+                matchStrategyDto.getMatchEndTime(),
                 formation,
                 team
         );

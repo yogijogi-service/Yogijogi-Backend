@@ -1,6 +1,7 @@
 package com.springboot.yogijogii.controller;
 
 import com.springboot.yogijogii.data.dto.ResultDto;
+import com.springboot.yogijogii.data.dto.fomationDto.response.FormationNameResponseDto;
 import com.springboot.yogijogii.data.dto.fomationDto.response.FormationResponseDto;
 import com.springboot.yogijogii.data.dto.fomationDto.request.Formation_detailRequestDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
@@ -41,6 +42,13 @@ public class TeamStrategyController {
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 
+    @DeleteMapping("/delete/formation")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    ResponseEntity<ResultDto> deleteFormation(HttpServletRequest request, Long teamId, Long formationId){
+        ResultDto resultDto = formationService.deleteFormation(request,teamId,formationId);
+        return ResponseEntity.status(HttpStatus.OK).body(resultDto);
+    }
+
     @GetMapping("/get/formation")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<FormationResponseDto> getFormation(HttpServletRequest request, @RequestParam Long teamId , @RequestParam  Long formationId){
@@ -53,4 +61,12 @@ public class TeamStrategyController {
         ResultDto resultDto = adminTeamService.saveMatchStrategy(request,matchStrategyDto);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
-}
+
+    @GetMapping("/get-position/name")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<FormationNameResponseDto> getPositionListByName(HttpServletRequest request, Long teamId, String positionName) {
+        FormationNameResponseDto formationNameResponseDto = formationService.getPositionListByName(request,teamId,positionName);
+        return ResponseEntity.status(HttpStatus.OK).body(formationNameResponseDto);
+    }
+
+    }

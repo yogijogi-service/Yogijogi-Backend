@@ -7,4 +7,5 @@ import com.springboot.yogijogii.data.entity.TeamStrategy;
 public interface TeamStrategyDao {
 
     TeamStrategy saveMatchStrategy (TeamStrategy teamStrategy);
+
 }

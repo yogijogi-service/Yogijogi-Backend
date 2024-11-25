@@ -2,10 +2,12 @@ package com.springboot.yogijogii.data.dao.Impl;
 
 import com.springboot.yogijogii.data.dao.FormationDao;
 import com.springboot.yogijogii.data.dto.fomationDto.response.FormationDetailResponseDto;
+import com.springboot.yogijogii.data.dto.fomationDto.response.FormationNameResponseDto;
 import com.springboot.yogijogii.data.dto.fomationDto.response.FormationResponseDto;
 import com.springboot.yogijogii.data.dto.fomationDto.request.Formation_detailRequestDto;
 import com.springboot.yogijogii.data.entity.Formation;
 import com.springboot.yogijogii.data.entity.FormationDetail;
+import com.springboot.yogijogii.data.entity.Team;
 import com.springboot.yogijogii.data.entity.TeamMember;
 import com.springboot.yogijogii.data.repository.formation.FormationDetailRepository;
 import com.springboot.yogijogii.data.repository.formation.FormationRepository;
@@ -29,9 +31,10 @@ public class FormationDaoImpl implements FormationDao {
 
 
     @Override
-    public void saveFormation(String formationName, List<Formation_detailRequestDto> formationDetailRequestDtos) {
+    public void saveFormation(String formationName, Team team, List<Formation_detailRequestDto> formationDetailRequestDtos) {
         Formation formation = Formation.builder()
                 .name(formationName)
+                .team(team)
                 .build();
 
         for (Formation_detailRequestDto formationDetailRequestDto : formationDetailRequestDtos) {
@@ -86,7 +89,23 @@ public class FormationDaoImpl implements FormationDao {
     }
 
     @Override
+    public FormationNameResponseDto findByPositionName(Long teamId,String positionName) {
+        Optional<Formation> formationInfo = formationRepository.findByName(teamId,positionName);
+        Formation formation = formationInfo.get();
+
+        return new FormationNameResponseDto(
+                formation.getId(),
+                formation.getName()
+        );
+    }
+
+    @Override
     public Formation findById(Long formationId) {
         return formationRepository.findById(formationId).get();
+    }
+
+    @Override
+    public void deleteFormation(Long formationId) {
+        formationRepository.deleteById(formationId);
     }
 }
