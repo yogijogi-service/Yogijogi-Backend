@@ -8,7 +8,6 @@ import com.springboot.yogijogii.data.entity.Team;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TeamMemberDao {
     void saveTeamMember(TeamMember teamMember);
@@ -32,7 +31,7 @@ public interface TeamMemberDao {
 
     void delete(TeamMember teamMember);
 
-    Optional<List<TeamMember>> getTeamMemberByUserIdAndPosition(Long userId, String position);
+    List<TeamMemberByPositionDto> getTeamMemberByUserIdAndPosition(Long userId, String position);
     boolean isTeamMemberAndManager(Long userId, Long teamId);
 
 }

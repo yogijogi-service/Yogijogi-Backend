@@ -6,16 +6,19 @@ import com.springboot.yogijogii.data.dto.fomationDto.response.FormationResponseD
 import com.springboot.yogijogii.data.dto.fomationDto.request.Formation_detailRequestDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.TeamStrategyMonthlyDto;
 import com.springboot.yogijogii.service.AdminTeamService;
 import com.springboot.yogijogii.service.FormationService;
 import io.swagger.annotations.ApiImplicitParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -68,5 +71,17 @@ public class TeamStrategyController {
         FormationNameResponseDto formationNameResponseDto = formationService.getPositionListByName(request,teamId,positionName);
         return ResponseEntity.status(HttpStatus.OK).body(formationNameResponseDto);
     }
-
+    @GetMapping("/get-strategy/monthly-day")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<List<TeamStrategyMonthlyDto>> getTeamStrategyMonthly(HttpServletRequest request, Long teamId,  @RequestParam("date")@DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate date) {
+        List<TeamStrategyMonthlyDto> teamStrategyMonthlyDtoList = adminTeamService.getTeamStrategyMonthly(request,teamId,date);
+        return ResponseEntity.status(HttpStatus.OK).body(teamStrategyMonthlyDtoList);
     }
+
+    @GetMapping("/get-strategy/monthly")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<List<TeamStrategyMonthlyDto>> getAllTeamStrategyMonthly(HttpServletRequest request, Long teamId,  @RequestParam String date) {
+        List<TeamStrategyMonthlyDto> teamStrategyMonthlyDtoList = adminTeamService.getAllTeamStrategyMonthly(request,teamId,date);
+        return ResponseEntity.status(HttpStatus.OK).body(teamStrategyMonthlyDtoList);
+    }
+}

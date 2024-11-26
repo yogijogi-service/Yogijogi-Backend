@@ -12,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.springboot.yogijogii.data.entity.QTeam.team;
 
 @RequiredArgsConstructor
 @Service
@@ -78,8 +77,19 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     }
 
     @Override
-    public Optional<List<TeamMember>> getTeamMemberByUserIdAndPosition(Long userId, String position) {
-        return teamMemberRepository.getTeamMemberByUserIdAndPosition(userId,position);
+    public List<TeamMemberByPositionDto> getTeamMemberByUserIdAndPosition(Long teamId, String position) {
+        Optional<List<TeamMember>> teamMembers = teamMemberRepository.getTeamMemberByUserIdAndPosition(teamId,position);
+        List<TeamMemberByPositionDto> teamMemberByPositionDtoList = new ArrayList<>();
+        for(TeamMember teamMember : teamMembers.get()){
+            TeamMemberByPositionDto teamMemberByPositionDto = new TeamMemberByPositionDto(
+                    teamMember.getId(),
+                    teamMember.getMember().getName(),
+                    teamMember.getPosition()
+            );
+            teamMemberByPositionDtoList.add(teamMemberByPositionDto);
+        }
+
+        return teamMemberByPositionDtoList;
     }
 
     @Override
