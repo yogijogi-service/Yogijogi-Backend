@@ -29,6 +29,8 @@ public class TeamResponseDto {
 
     private String dues;
 
+    private Long memberCount;
+
     private List<String> activityDays;
 
     private List<String> activityTime;

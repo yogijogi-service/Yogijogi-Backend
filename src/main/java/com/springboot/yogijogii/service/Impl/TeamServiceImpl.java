@@ -89,6 +89,7 @@ public class TeamServiceImpl implements TeamService {
                 .town(team.getTown())
                 .matchLocation(team.getMatchLocation())
                 .dues(team.getDues())
+                .memberCount(team.getTeamMembers().stream().count())
                 .teamGender(team.getTeamGender())
                 .ageRange(team.getAgeRange())
                 .teamLevel(team.getTeamLevel())

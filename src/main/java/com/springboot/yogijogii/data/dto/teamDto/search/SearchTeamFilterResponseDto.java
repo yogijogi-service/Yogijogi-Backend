@@ -13,6 +13,7 @@ public class SearchTeamFilterResponseDto {
     private String teamName;
     private String teamImageUrl;
     private String teamGender;
+    private Long memberCount;
     private List<String> activityTime;
     private List<String> activityDays;
     private String matchLocation;

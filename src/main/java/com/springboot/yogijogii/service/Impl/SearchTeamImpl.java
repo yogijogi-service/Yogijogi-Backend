@@ -52,6 +52,7 @@ public class SearchTeamImpl implements SearchTeam {
                         team.getTeamName(),
                         team.getTeamImageUrl(),
                         team.getTeamGender(),
+                        team.getTeamMembers().stream().count(),
                         team.getActivityTime(),
                         team.getActivityDays(),
                         team.getMatchLocation()
@@ -69,22 +70,23 @@ public class SearchTeamImpl implements SearchTeam {
         }
 
         // 팀 정보를 TeamResponseDto로 변환하여 반환
-        TeamResponseDto teamResponseDto = new TeamResponseDto(
-                team.getTeamName(),
-                team.getTeam_introduce(),
-                team.getTeamImageUrl(),
-                team.getInviteCode(),
-                team.getRegion(),
-                team.getTown(),
-                team.getMatchLocation(),
-                team.getDues(),
-                team.getActivityDays(),
-                team.getActivityTime(),
-                team.getTeamGender(),
-                team.getAgeRange(),
-                team.getTeamLevel(),
-                team.getPositionRequired()
-        );
+        TeamResponseDto teamResponseDto = TeamResponseDto.builder()
+                .teamName(team.getTeamName())
+                .team_introduce(team.getTeam_introduce())
+                .teamImageUrl(team.getTeamImageUrl())
+                .inviteCode(team.getInviteCode())
+                .region(team.getRegion())
+                .town(team.getTown())
+                .matchLocation(team.getMatchLocation())
+                .dues(team.getDues())
+                .memberCount(team.getTeamMembers().stream().count())
+                .activityDays(team.getActivityDays())
+                .activityTime(team.getActivityTime())
+                .teamGender(team.getTeamGender())
+                .ageRange(team.getAgeRange())
+                .teamLevel(team.getTeamLevel())
+                .positionRequired(team.getPositionRequired())
+                .build();
 
         return teamResponseDto;
     }
