@@ -4,6 +4,7 @@ import com.springboot.yogijogii.data.dao.*;
 import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.MatchStrategyDto;
 import com.springboot.yogijogii.data.dto.teamStrategy.TeamMemberByPositionDto;
+import com.springboot.yogijogii.data.dto.teamStrategy.TeamStrategyMonthlyDto;
 import com.springboot.yogijogii.data.entity.*;
 import com.springboot.yogijogii.dateConverter.DateTimeConverter;
 import com.springboot.yogijogii.jwt.JwtAuthenticationService;
@@ -95,18 +96,7 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         if(!isManger){
             throw new RuntimeException("해당팀에 속해있지 않거나 매니저권한이 없습니다.");
         }
-        Optional<List<TeamMember>> teamMembers = teamMemberDao.getTeamMemberByUserIdAndPosition(teamId, position);
-        List<TeamMemberByPositionDto> teamMemberByPositionDtoList = new ArrayList<>();
-        for(TeamMember teamMember : teamMembers.get()){
-            TeamMemberByPositionDto teamMemberByPositionDto = new TeamMemberByPositionDto(
-                    teamMember.getId(),
-                    teamMember.getMember().getName(),
-                    teamMember.getPosition()
-            );
-            teamMemberByPositionDtoList.add(teamMemberByPositionDto);
-        }
-
-        return teamMemberByPositionDtoList;
+        return teamMemberDao.getTeamMemberByUserIdAndPosition(teamId, position);
     }
     @Override
     public ResultDto saveMatchStrategy(HttpServletRequest request, MatchStrategyDto matchStrategyDto) {
@@ -144,6 +134,33 @@ public class AdminTeamServiceImpl implements AdminTeamService {
         resultStatusService.setSuccess(resultDto);
 
         return resultDto;
+    }
+
+    @Override
+    public List<TeamStrategyMonthlyDto> getTeamStrategyMonthly(HttpServletRequest request, Long teamId,LocalDate date) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        Long userId = member.getMemberId();
+
+        // 매니저 권한 확인
+        boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if (!isManager) {
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+
+        return teamStrategyDao.findTeamStrategyMonthlyInfo(teamId,date);
+    }
+
+    @Override
+    public List<TeamStrategyMonthlyDto> getAllTeamStrategyMonthly(HttpServletRequest request, Long teamId, String date) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        Long userId = member.getMemberId();
+
+        // 매니저 권한 확인
+        boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if (!isManager) {
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+        return teamStrategyDao.findAllTeamStrategyMonthlyInfo(teamId,date);
     }
 }
 
