@@ -13,6 +13,7 @@ public class AdditionalInfoDto {
     private String gender;
     private String birthDate;
     private String address;
+    private String addressDetail;
 
 
 }

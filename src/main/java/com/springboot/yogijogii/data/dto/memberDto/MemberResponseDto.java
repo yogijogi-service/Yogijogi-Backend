@@ -22,6 +22,8 @@ public class MemberResponseDto {
 
     private String address;
 
+    private String addressDetail;
+
     private String profileUrl;
 
     private String birthDate;  //생년월일

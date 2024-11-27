@@ -75,7 +75,8 @@ public class MemberServiceImpl implements MemberService {
                 .level(signReqeustDto.getLevel())
                 .hasExperience(signReqeustDto.isHasExperience())
                 .certificationNum(true)
-                .address(signReqeustDto.getBirthDate())
+                .address(signReqeustDto.getAddress())
+                .addressDetail(signReqeustDto.getAddressDetail())
                 .loginMethod("Normal")
                 .gender(signReqeustDto.getGender())
                 .name(signReqeustDto.getName())
@@ -94,7 +95,6 @@ public class MemberServiceImpl implements MemberService {
 
     public MemberAgreement saveAgreement(AgreementDto agreementDto) {
         return MemberAgreement.builder()
-                .allAgreement(agreementDto.isAllAgreement())
                 .consentPersonalInfo(agreementDto.isConsentPersonalInfo())
                 .consentServiceUser(agreementDto.isConsentServiceUser())
                 .consentToReceivingMail(agreementDto.isConsentToReceivingMail())
@@ -110,6 +110,7 @@ public class MemberServiceImpl implements MemberService {
             MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                     .memberId(member.getMemberId())
                     .address(member.getAddress())
+                    .addressDetail(member.getAddressDetail())
                     .birthDate(member.getBirthDate())
                     .gender(member.getGender())
                     .email(member.getEmail())
