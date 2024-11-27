@@ -15,8 +15,6 @@ public class MemberAgreement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private boolean allAgreement=false;
-
     private boolean consentServiceUser=false;
 
     private boolean consentPersonalInfo=false;

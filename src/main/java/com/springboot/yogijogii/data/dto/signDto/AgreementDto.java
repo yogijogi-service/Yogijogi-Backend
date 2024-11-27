@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @Data
 public class AgreementDto {
-    boolean allAgreement;
 
     boolean consentServiceUser;
 

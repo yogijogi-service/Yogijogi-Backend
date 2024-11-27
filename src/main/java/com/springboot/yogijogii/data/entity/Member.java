@@ -44,6 +44,8 @@ public class Member implements UserDetails {
 
     private String address;
 
+    private String addressDetail;
+
     private String profileUrl;
 
     private String birthDate;  //생년월일
@@ -139,5 +141,6 @@ public class Member implements UserDetails {
         this.gender = additionalInfoDto.getGender();
         this.address = additionalInfoDto.getAddress();
         this.update_At = LocalDateTime.now();
+        this.addressDetail = additionalInfoDto.getAddressDetail();
     }
 }

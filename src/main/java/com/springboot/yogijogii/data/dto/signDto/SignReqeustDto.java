@@ -22,6 +22,8 @@ public class SignReqeustDto {
 
     private String address;
 
+    private String addressDetail;
+
     private boolean hasExperience;
 
 
