@@ -1,5 +1,7 @@
 package com.springboot.yogijogii.service.Impl;
 
+import com.springboot.yogijogii.data.dao.TeamMemberDao;
+import com.springboot.yogijogii.data.dto.announcementDto.AnnouncementResponseListDto;
 import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.s3.S3Uploader;
 import com.springboot.yogijogii.data.dao.AnnouncementDao;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private final ResultStatusService resultStatusService;
     private final TeamRepository teamRepository;
     private final AnnouncementRepository announcementRepository;
+    private final TeamMemberDao teamMemberDao;
 
 
     @Override
@@ -54,13 +58,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             imageUrl = saveImageS3(image);
         }
         if(isMemberManagerOfTeam(member,team)){
-            Announcement announcement = new Announcement(
-                    announcementRequestDto.getTitle(),
-                    announcementRequestDto.getContent(),
-                    imageUrl,
-                    member
-            );
-            announcementDao.save(announcement);
+            announcementDao.save(announcementRequestDto,imageUrl,member,team);
             resultDto.setDetailMessage("공지사항 등록 완료");
             resultStatusService.setSuccess(resultDto);
         }else{
@@ -68,6 +66,46 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             resultStatusService.setFail(resultDto);
         }
 
+
+        return resultDto;
+    }
+
+    @Override
+    public ResultDto updateAnnouncement(Long announcementId, Long teamId,AnnouncementRequestDto announcementRequestDto, MultipartFile image,HttpServletRequest request)throws IOException {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        Long userId = member.getMemberId();
+
+        // 매니저 권한 확인
+        boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if (!isManager) {
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+        ResultDto resultDto = new ResultDto();
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = saveImageS3(image);
+        }
+        announcementDao.update(announcementRequestDto,announcementId,imageUrl,member);
+        resultDto.setDetailMessage("공지사항 수정 완료");
+        resultStatusService.setSuccess(resultDto);
+        return resultDto;
+    }
+
+    @Override
+    public ResultDto deleteAnnouncement(Long announcementId, Long teamId, HttpServletRequest request) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        Long userId = member.getMemberId();
+
+        // 매니저 권한 확인
+        boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if (!isManager) {
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+
+        ResultDto resultDto = new ResultDto();
+        announcementDao.delete(announcementId);
+        resultDto.setDetailMessage("공지사항 삭제 완료");
+        resultStatusService.setSuccess(resultDto);
 
         return resultDto;
     }
@@ -100,6 +138,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
             throw new RuntimeException("공지사랑 열람할 권한이 없습니다.");
         }
 
+    }
+
+
+    @Override
+    public List<AnnouncementResponseListDto> getAllAnnouncements(Long teamId, HttpServletRequest request) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        Long userId = member.getMemberId();
+
+        // 매니저 권한 확인
+        boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
+        if (!isManager) {
+            throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+
+        return announcementDao.getAnnouncementByTeamId(teamId);
     }
 
     public String saveImageS3(MultipartFile profileImage) throws IOException {

@@ -79,7 +79,10 @@ public class Team {
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<TeamStrategy> teamStrategyList;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Formation> formationList;
+
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
+    private List<Announcement> announcementList;
 
 }
