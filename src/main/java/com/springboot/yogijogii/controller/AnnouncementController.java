@@ -36,7 +36,7 @@ public class AnnouncementController {
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
     }
 
-    @GetMapping("/manager/delete}")
+    @GetMapping("/manager/delete")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<ResultDto> deleteAnnouncement(Long announcementId, Long teamId, HttpServletRequest request){
         ResultDto resultDto = announcementService.deleteAnnouncement(announcementId,teamId,request);
