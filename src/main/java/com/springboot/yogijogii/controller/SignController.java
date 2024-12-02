@@ -1,9 +1,11 @@
 package com.springboot.yogijogii.controller;
 
+import com.springboot.yogijogii.data.dto.RefreshTokenResponseDto;
 import com.springboot.yogijogii.data.dto.signDto.AgreementDto;
 import com.springboot.yogijogii.data.dto.ResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
+import com.springboot.yogijogii.service.RefreshTokenService;
 import com.springboot.yogijogii.service.SignService;
 import com.springboot.yogijogii.service.SmsService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class SignController {
 
     private final SignService signService;
+    private final RefreshTokenService refreshTokenService;
     private final SmsService smsService;
 
     @PostMapping("/send-sms")
@@ -59,5 +62,13 @@ public class SignController {
     public ResponseEntity<ResultDto> checkEmail(@PathVariable String email) {
         ResultDto resultDto = signService.checkEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(resultDto);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<RefreshTokenResponseDto> reissue(@RequestParam String refreshToken, HttpServletRequest request){
+        log.info("SignController reissue ==> 토큰 재발급 메서드");
+        RefreshTokenResponseDto refreshTokenResponseDto = refreshTokenService.reIssue(refreshToken, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(refreshTokenResponseDto);
     }
 }

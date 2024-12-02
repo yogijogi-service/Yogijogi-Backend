@@ -3,6 +3,8 @@ package com.springboot.yogijogii.service.Impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.springboot.yogijogii.data.repository.refreshToken.RefreshTokenRepository;
+import com.springboot.yogijogii.refreshToken.RefreshToken;
 import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.data.dao.AuthDao;
 import com.springboot.yogijogii.data.dao.TeamMemberDao;
@@ -41,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final MemberService memberService;
     private final TeamMemberDao teamMemberDao;
     private final ResultStatusService resultStatusService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
 
     @Value("${kakao.client.id}")
@@ -329,17 +332,13 @@ public class AuthServiceImpl implements AuthService {
 
     private void generateAndSetTokens(Member member, SignInResultDto signInResultDto) {
         String accessTokenNew = jwtProvider.createToken(member.getEmail(), List.of("ROLE_USER"));
-        String existingRefreshToken = member.getRefreshToken();
-        String refreshToken;
 
-        if (existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
-            refreshToken = existingRefreshToken;
-        } else {
-            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
-            member.setRefreshToken(refreshToken);
-            authDao.saveMember(member);
-        }
+        String refreshToken = jwtProvider.createRefreshToken(member.getEmail());
 
+        refreshTokenRepository.save(new RefreshToken(member.getEmail(),refreshToken));
+        authDao.saveMember(member);
+
+        log.info("[refreshToken] : {}",refreshToken);
         signInResultDto.setToken(accessTokenNew);
         signInResultDto.setRefreshToken(refreshToken);
         resultStatusService.setSuccess(signInResultDto);
