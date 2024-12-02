@@ -50,7 +50,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
                         "/sign/exception","/main-api/**","/auth/**").permitAll() // 가입 및 로그인 주소는 허용
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll() // 프리플라이트 요청를 허용
                 .antMatchers("/api/team/**","api/search/**").authenticated()
-                .antMatchers("/api/announcement/manager/**").hasRole("MANAGER")
+                .antMatchers("/api/announcement/**").authenticated()
                 .antMatchers("/test/**").permitAll()
                 .antMatchers("**exception**").permitAll()
                 .and()
@@ -65,7 +65,7 @@ public class SecurityConfig extends  WebSecurityConfigurerAdapter{
     @Override
     public void configure(WebSecurity webSecurity) {
         webSecurity.ignoring().antMatchers("/v2/api-docs", "/swagger-resources/**",
-                "/swagger-ui.html", "/webjars/**", "/swagger/**", "/sign-api/exception");
+                "/swagger-ui.html", "/webjars/**", "/swagger/**");
     }
 
 
