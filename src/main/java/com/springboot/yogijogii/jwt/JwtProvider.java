@@ -91,12 +91,14 @@ public class JwtProvider {
         Claims claims = Jwts.claims().setSubject(email);
         Date now = new Date();
 
-        return Jwts.builder()
+        String refreshToken =Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
                 .signWith(SignatureAlgorithm.HS256, refreshSecretKey)
                 .compact();
+
+        return refreshToken;
     }
 
     // jwt 토큰에서 회원 구별 조회

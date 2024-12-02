@@ -57,6 +57,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         if (image != null && !image.isEmpty()) {
             imageUrl = saveImageS3(image);
         }
+
         if(isMemberManagerOfTeam(member,team)){
             announcementDao.save(announcementRequestDto,imageUrl,member,team);
             resultDto.setDetailMessage("공지사항 등록 완료");

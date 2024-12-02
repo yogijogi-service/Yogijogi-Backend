@@ -9,7 +9,9 @@ import com.springboot.yogijogii.data.dto.signDto.SignInResultDto;
 import com.springboot.yogijogii.data.dto.signDto.SignReqeustDto;
 import com.springboot.yogijogii.data.entity.*;
 import com.springboot.yogijogii.data.repository.member.MemberRepository;
+import com.springboot.yogijogii.data.repository.refreshToken.RefreshTokenRepository;
 import com.springboot.yogijogii.jwt.JwtProvider;
+import com.springboot.yogijogii.refreshToken.RefreshToken;
 import com.springboot.yogijogii.result.ResultStatusService;
 import com.springboot.yogijogii.service.MemberService;
 import com.springboot.yogijogii.service.SignService;
@@ -36,6 +38,7 @@ public class SignServiceImpl implements SignService {
     private final JwtProvider jwtProvider;
     private final TeamMemberDao teamMemberDao;
     private final ResultStatusService resultStatusService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public ResultDto SignUpSmsVerify(String certificationNumber, HttpServletRequest request) {
@@ -122,16 +125,11 @@ public class SignServiceImpl implements SignService {
                         .collect(Collectors.toList())
         );
 
-        String existingRefreshToken = member.getRefreshToken();
-        String refreshToken;
+        String refreshToken = jwtProvider.createRefreshToken(member.getEmail());
 
-        if(existingRefreshToken != null && jwtProvider.validRefreshToken(existingRefreshToken)) {
-            refreshToken = existingRefreshToken;
-        }else{
-            refreshToken = jwtProvider.createRefreshToken(member.getEmail());
-            member.setRefreshToken(refreshToken);
-            signDao.saveSignUpInfo(member);
-        }
+        refreshTokenRepository.save(new RefreshToken(email,refreshToken));
+
+        log.info("[refreshToken] : {}",refreshToken);
 
         // SignInResultDto 작성 및 반환
         SignInResultDto signInResultDto = new SignInResultDto();

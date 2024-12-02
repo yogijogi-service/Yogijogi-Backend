@@ -64,9 +64,6 @@ public class Member implements UserDetails {
 
     private String serviceRole;
 
-    @Column(length = 512)
-    private String refreshToken;
-
     private LocalDateTime create_At;
 
     private LocalDateTime update_At;
