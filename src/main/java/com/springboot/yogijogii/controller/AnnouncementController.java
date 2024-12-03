@@ -54,9 +54,20 @@ public class AnnouncementController {
 
     @GetMapping("/manager/get-all")
     @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<List<AnnouncementResponseListDto>> getAllManagerAnnouncements(Long teamId, HttpServletRequest request){
+        List<AnnouncementResponseListDto> announcementResponseListDtoList = announcementService.getAllManagerAnnouncements(teamId,request);
+        return ResponseEntity.status(HttpStatus.OK).body(announcementResponseListDtoList);
+    }
+    @GetMapping("/member/detail")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
+    public ResponseEntity<AnnouncementResponseDto> getAnnouncementDetails(@RequestParam Long teamId, @RequestParam Long announcementId, HttpServletRequest request){
+        AnnouncementResponseDto announcementResponseDto = announcementService.getAnnouncementDetails(teamId,announcementId,request);
+        return ResponseEntity.status(HttpStatus.OK).body(announcementResponseDto);
+    }
+    @GetMapping("/member/get-all")
+    @ApiImplicitParam(name = "X-AUTH-TOKEN", value = "로그인 성공 후 발급 받은 access_token", required = true, dataType = "String", paramType = "header")
     public ResponseEntity<List<AnnouncementResponseListDto>> getAllAnnouncements(Long teamId, HttpServletRequest request){
         List<AnnouncementResponseListDto> announcementResponseListDtoList = announcementService.getAllAnnouncements(teamId,request);
         return ResponseEntity.status(HttpStatus.OK).body(announcementResponseListDtoList);
     }
-
     }
