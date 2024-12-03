@@ -33,5 +33,6 @@ public interface TeamMemberDao {
 
     List<TeamMemberByPositionDto> getTeamMemberByUserIdAndPosition(Long userId, String position);
     boolean isTeamMemberAndManager(Long userId, Long teamId);
+    boolean isTeamMember(Long userId,Long teamId);
 
 }

@@ -143,7 +143,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
 
     @Override
-    public List<AnnouncementResponseListDto> getAllAnnouncements(Long teamId, HttpServletRequest request) {
+    public List<AnnouncementResponseListDto> getAllManagerAnnouncements(Long teamId, HttpServletRequest request) {
         Member member = jwtAuthenticationService.authenticationToken(request);
         Long userId = member.getMemberId();
 
@@ -151,6 +151,51 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         boolean isManager = teamMemberDao.isTeamMemberAndManager(userId, teamId);
         if (!isManager) {
             throw new RuntimeException("해당팀에 속해있지 않거나 매니저 권한이 없습니다.");
+        }
+
+        return announcementDao.getAnnouncementByTeamId(teamId);
+    }
+
+    @Override
+    public AnnouncementResponseDto getAnnouncementDetails(Long teamId, Long announcementId, HttpServletRequest request) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        log.info("[memberEmail] : {} ",member.getEmail());
+
+        Team team = teamRepository.findByTeamId(teamId);
+        log.info("[team] : {} ",team.getTeamName());
+
+        boolean isMember = teamMemberDao.isTeamMemberAndManager(member.getMemberId(), teamId);
+        if(!isMember){
+            throw new RuntimeException("해당팀에서 해당 회원을 찾을 수 없습니다.");
+        }
+        Announcement announcement = announcementRepository.findById(announcementId)
+                .orElseThrow(()-> new ResourceNotFoundException("해당 ID로 공지사항을 찾을 수 없습니다. ID: " + announcementId));
+
+        AnnouncementResponseDto announcementResponseDto = new AnnouncementResponseDto(
+                announcementId,
+                member.getName(),
+                announcement.getTitle(),
+                announcement.getContent(),
+                announcement.getImageUrl(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        return announcementResponseDto;
+    }
+
+    @Override
+    public List<AnnouncementResponseListDto> getAllAnnouncements(Long teamId, HttpServletRequest request) {
+        Member member = jwtAuthenticationService.authenticationToken(request);
+        log.info("[memberEmail] : {} ",member.getEmail());
+
+        Team team = teamRepository.findByTeamId(teamId);
+        log.info("[team] : {} ",team.getTeamName());
+
+        boolean isMember = teamMemberDao.isTeamMemberAndManager(member.getMemberId(), teamId);
+        if(!isMember){
+            throw new RuntimeException("해당팀에서 해당 회원을 찾을 수 없습니다.");
         }
 
         return announcementDao.getAnnouncementByTeamId(teamId);

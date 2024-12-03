@@ -29,7 +29,6 @@ public class TeamMemberRepositoryCustomImpl implements TeamMemberRepositoryCusto
     public boolean isTeamMemberAndManager(Long userId, Long teamId) {
         QTeamMember qTeamMember = QTeamMember.teamMember;
 
-        // QueryDSL을 이용한 조건 쿼리
         BooleanExpression isMemberInTeam = qTeamMember.member().memberId.eq(userId)
                 .and(qTeamMember.team().teamId.eq(teamId))
                 .and(qTeamMember.role.in("ROLE_MANAGER", "ROLE_SUPER_MANAGER"));
@@ -39,5 +38,17 @@ public class TeamMemberRepositoryCustomImpl implements TeamMemberRepositoryCusto
                 .from(qTeamMember)
                 .where(isMemberInTeam)
                 .fetchFirst() != null; // 데이터가 있으면 true 반환
+    }
+
+    @Override
+    public boolean isTeamMember(Long userId, Long teamId) {
+        QTeamMember qTeamMember = QTeamMember.teamMember;
+        BooleanExpression isMemberInTeam = qTeamMember.member().memberId.eq(userId)
+                .and(qTeamMember.team().teamId.eq(teamId))
+                .and(qTeamMember.role.in("ROLE_MANAGER", "ROLE_SUPER_MANAGER","ROLE_MEMBER"));
+        return jpaQueryFactory.selectOne()
+                .from(qTeamMember)
+                .where(isMemberInTeam)
+                .fetchFirst() != null;
     }
 }

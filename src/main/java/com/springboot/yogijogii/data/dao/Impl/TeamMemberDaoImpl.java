@@ -96,4 +96,9 @@ public class TeamMemberDaoImpl implements TeamMemberDao {
     public boolean isTeamMemberAndManager(Long userId, Long teamId) {
         return teamMemberRepository.isTeamMemberAndManager(userId,teamId);
     }
+
+    @Override
+    public boolean isTeamMember(Long userId, Long teamId) {
+        return teamMemberRepository.isTeamMember(userId,teamId);
+    }
 }

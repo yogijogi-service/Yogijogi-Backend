@@ -15,6 +15,8 @@ public interface AnnouncementService {
     ResultDto deleteAnnouncement(Long announcementId, Long teamId ,HttpServletRequest request);
     ResultDto updateAnnouncement(Long id, Long teamId,AnnouncementRequestDto announcementRequestDto, MultipartFile image,HttpServletRequest request)throws IOException;
     AnnouncementResponseDto getManagerAnnouncementDetails(Long teamId, Long announcementId,HttpServletRequest request);
+    List<AnnouncementResponseListDto> getAllManagerAnnouncements(Long teamId, HttpServletRequest request);
+    AnnouncementResponseDto getAnnouncementDetails(Long teamId, Long announcementId,HttpServletRequest request);
     List<AnnouncementResponseListDto> getAllAnnouncements(Long teamId, HttpServletRequest request);
 
 }
